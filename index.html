@@ -152,7 +152,7 @@
       </div>
       <div class="card">
         <h4>Braking
-          <span class="status-inline st-wip">bench-tested, not yet mounted</span></h4>
+          <span class="status-inline st-done">bench-tested and mounted on the cart</span></h4>
         <p>A self-locking 12&nbsp;V linear actuator (330&nbsp;lb) pulls the
           brake cable through a tension-only Y-bridle at the cable equalizer,
           driven by a BTS7960 H-bridge, with a slide potentiometer for
@@ -430,13 +430,16 @@
 
       <li class="phase is-done">
         <span class="phase-date">July 26–30, 2026</span>
-        <h3>Phase 3 — Brake subsystem <span class="tag tag--done">✅ Bench-tested</span> <span class="tag tag--wip">🟡 not yet mounted</span></h3>
+        <h3>Phase 3 — Brake subsystem <span class="tag tag--done">✅ Complete</span></h3>
         <p>Linear-actuator brake with a tension-only cable bridle and
           continuous position feedback. <strong>Full chain bench-tested
           successfully</strong> — extend/retract with variable speed over serial;
-          the self-locking actuator holds position with no holding current.
-          Not yet mounted to the cart or integrated into the control loop —
-          manual during the RC phase by design.</p>
+          the self-locking actuator holds position with no holding current —
+          and now <strong>mounted on the cart</strong>, pulling the brake cable
+          through the Y-bridle at the equalizer. Because the linkage is
+          tension-only, the pedal still overrides it and a snapped cable
+          releases the brakes. Reporting the fader position back to the Jetson
+          (brake telemetry) is the next step — see the roadmap.</p>
         <!-- brake bench test video: shows the real file when it exists in assets/,
              otherwise the labeled placeholder box below. Nothing to edit here —
              just drop the correctly-named file into assets/. -->
