@@ -578,18 +578,20 @@
           first step is a plain outdoor fix before enabling the L5 band.</p>
       </li>
 
-      <li class="phase">
-        <span class="phase-date">Upcoming</span>
-        <h3>Phase 10 — Autonomy (VLA training) <span class="tag tag--plan">⬜ Planned</span></h3>
-        <p>Not started, but designed. Data collection is specified —
-          language-conditioned episodes with a frozen instruction vocabulary, labeled at
-          record time from the controller, 100+ episodes per maneuver across
-          many intersections — and an inference benchmark is written to size
-          what six camera views cost in latency and memory on the Jetson.
-          Depends on hardware-complete — drives on the controller with the
-          cameras mounted — so that collection can begin. Plan: fine-tune a
-          pretrained VLA on the collected driving data, then layer in the
-          safety override.</p>
+      <li class="phase is-wip">
+        <span class="phase-date">August 2026 →</span>
+        <h3>Phase 10 — Autonomy (VLA training) <span class="tag tag--wip">🟡 In progress</span></h3>
+        <p>Underway. The data-collection design is locked —
+          language-conditioned episodes with a frozen instruction vocabulary,
+          labeled at record time from the controller, 100+ episodes per maneuver
+          across many intersections — and the model side is being sized before
+          any driving data exists: the pretrained SmolVLA checkpoint is set up
+          on the Jetson with LeRobot, and an inference benchmark sweeps camera
+          views, image resolution, and denoise steps to measure exactly what six
+          views cost in latency and memory. Next: brake telemetry and the
+          combined drive-and-log script, then collection starts once the cameras
+          are mounted. Then fine-tune, deploy, and layer in the safety
+          override.</p>
       </li>
     </ol>
     <hr class="sec-rule">
