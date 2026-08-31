@@ -197,9 +197,14 @@
     <!-- wiring / architecture diagram: shows the real file when it exists in assets/,
          otherwise the labeled placeholder box below. Nothing to edit here —
          just drop the correctly-named file into assets/. -->
-    <figure class="media">
-      <img src="assets/wiring-diagram.png" alt="Full-system wiring diagram: power distribution and Arduino pin assignments">
-      <figcaption>Full-system schematic — power distribution and Arduino pin map.</figcaption>
+    <figure class="media diagram-figure">
+      <button type="button" class="diagram-open" data-full="assets/wiring-diagram-full.png"
+              aria-label="Open the wiring diagram in a zoomable viewer">
+        <img src="assets/wiring-diagram.png" alt="Full-system wiring diagram: power distribution and Arduino pin assignments">
+        <span class="diagram-cue" aria-hidden="true">Click to explore &mdash; drag to pan, scroll to zoom</span>
+      </button>
+      <figcaption>Full-system schematic — every component photographed and wired
+        to scale. Open it to zoom in on individual connections.</figcaption>
       <div class="media-slot" aria-label="Wiring diagram placeholder">
         <span class="slot-kind">DIAGRAM</span>
         <span class="slot-name">assets/wiring-diagram.png</span>
@@ -529,6 +534,157 @@
     <div class="foot-note">A human sits in the driver's seat for every test. No exceptions.</div>
   </div>
 </footer>
+
+<!-- ================================================================
+     ZOOMABLE DIAGRAM VIEWER
+     The wiring diagram is a large pictorial harness map, so the page shows a
+     downscaled preview and loads the full-resolution file only when someone
+     opens it. Drag to pan, scroll/pinch to zoom, Esc to close.
+     ================================================================ -->
+<div id="dgv" class="dgv" hidden>
+  <div class="dgv-bar">
+    <span class="dgv-title">Full-system wiring diagram</span>
+    <span class="dgv-hint">drag to pan · scroll to zoom · Esc to close</span>
+    <span class="dgv-btns">
+      <button type="button" data-act="out" aria-label="Zoom out">&minus;</button>
+      <button type="button" data-act="in" aria-label="Zoom in">+</button>
+      <button type="button" data-act="fit" aria-label="Fit to screen">Fit</button>
+      <button type="button" data-act="close" aria-label="Close viewer">&times;</button>
+    </span>
+  </div>
+  <div class="dgv-stage" id="dgv-stage">
+    <img id="dgv-img" alt="Full-system wiring diagram, zoomable">
+    <div class="dgv-loading" id="dgv-loading">loading full-resolution diagram&hellip;</div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var box = document.getElementById('dgv');
+  if (!box) return;
+  var stage = document.getElementById('dgv-stage');
+  var img = document.getElementById('dgv-img');
+  var loading = document.getElementById('dgv-loading');
+  var scale = 1, tx = 0, ty = 0, natural = null, loadedSrc = null;
+
+  function apply() {
+    img.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+  }
+  function fit() {
+    if (!natural) return;
+    var r = stage.getBoundingClientRect();
+    scale = Math.min(r.width / natural.w, r.height / natural.h) * 0.96;
+    tx = (r.width - natural.w * scale) / 2;
+    ty = (r.height - natural.h * scale) / 2;
+    apply();
+  }
+  function zoomAt(cx, cy, factor) {
+    var next = Math.min(Math.max(scale * factor, 0.05), 40);
+    // keep the point under the cursor fixed
+    tx = cx - (cx - tx) * (next / scale);
+    ty = cy - (cy - ty) * (next / scale);
+    scale = next;
+    apply();
+  }
+  function open(src) {
+    box.hidden = false;
+    document.body.style.overflow = 'hidden';
+    if (loadedSrc !== src) {
+      loading.hidden = false;
+      img.removeAttribute('src');
+      natural = null;
+      var probe = new Image();
+      probe.onload = function () {
+        natural = { w: probe.naturalWidth, h: probe.naturalHeight };
+        img.src = src; loadedSrc = src; loading.hidden = true; fit();
+      };
+      probe.onerror = function () {
+        loading.textContent = 'Full-resolution diagram not added yet (assets/wiring-diagram-full.png).';
+      };
+      probe.src = src;
+    } else { fit(); }
+  }
+  function close() {
+    box.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('.diagram-open'), function (b) {
+    b.addEventListener('click', function () {
+      // fall back to the preview image if no full-res file was supplied
+      var pv = b.querySelector('img');
+      open(b.getAttribute('data-full') || (pv && pv.getAttribute('src')));
+    });
+  });
+
+  box.addEventListener('click', function (e) {
+    var act = e.target.getAttribute && e.target.getAttribute('data-act');
+    if (!act) return;
+    var r = stage.getBoundingClientRect();
+    if (act === 'in')  zoomAt(r.width / 2, r.height / 2, 1.4);
+    if (act === 'out') zoomAt(r.width / 2, r.height / 2, 1 / 1.4);
+    if (act === 'fit') fit();
+    if (act === 'close') close();
+  });
+
+  stage.addEventListener('wheel', function (e) {
+    if (!natural) return;
+    e.preventDefault();
+    var r = stage.getBoundingClientRect();
+    zoomAt(e.clientX - r.left, e.clientY - r.top, e.deltaY < 0 ? 1.12 : 1 / 1.12);
+  }, { passive: false });
+
+  var drag = null;
+  stage.addEventListener('pointerdown', function (e) {
+    if (!natural) return;
+    drag = { x: e.clientX - tx, y: e.clientY - ty };
+    stage.setPointerCapture(e.pointerId);
+    stage.classList.add('grabbing');
+  });
+  stage.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    tx = e.clientX - drag.x; ty = e.clientY - drag.y; apply();
+  });
+  function endDrag() { drag = null; stage.classList.remove('grabbing'); }
+  stage.addEventListener('pointerup', endDrag);
+  stage.addEventListener('pointercancel', endDrag);
+
+  stage.addEventListener('dblclick', function (e) {
+    var r = stage.getBoundingClientRect();
+    zoomAt(e.clientX - r.left, e.clientY - r.top, 2);
+  });
+
+  // two-finger pinch on touch devices
+  var pinch = null;
+  stage.addEventListener('touchstart', function (e) {
+    if (e.touches.length !== 2) return;
+    var d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX,
+                       e.touches[0].clientY - e.touches[1].clientY);
+    pinch = { d: d };
+  }, { passive: true });
+  stage.addEventListener('touchmove', function (e) {
+    if (e.touches.length !== 2 || !pinch) return;
+    e.preventDefault();
+    var d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX,
+                       e.touches[0].clientY - e.touches[1].clientY);
+    var r = stage.getBoundingClientRect();
+    var cx = (e.touches[0].clientX + e.touches[1].clientX) / 2 - r.left;
+    var cy = (e.touches[0].clientY + e.touches[1].clientY) / 2 - r.top;
+    zoomAt(cx, cy, d / pinch.d);
+    pinch.d = d;
+  }, { passive: false });
+  stage.addEventListener('touchend', function () { pinch = null; });
+
+  document.addEventListener('keydown', function (e) {
+    if (box.hidden) return;
+    if (e.key === 'Escape') close();
+    if (e.key === '+' || e.key === '=') { var r = stage.getBoundingClientRect(); zoomAt(r.width/2, r.height/2, 1.4); }
+    if (e.key === '-') { var r2 = stage.getBoundingClientRect(); zoomAt(r2.width/2, r2.height/2, 1/1.4); }
+    if (e.key === '0') fit();
+  });
+  window.addEventListener('resize', function () { if (!box.hidden) fit(); });
+})();
+</script>
 
 <!-- ================================================================
      MEDIA AUTO-SWAP

@@ -434,3 +434,67 @@ footer .foot-note { font-family: var(--mono); font-size: 12.5px; letter-spacing:
   .media-slot { padding: 26px 16px; }
   .phase { padding-left: 26px; }
 }
+
+/* ---------- zoomable diagram: preview button + fullscreen viewer ---------- */
+
+.diagram-open {
+  display: block; width: 100%; padding: 0; border: 0; background: none;
+  cursor: zoom-in; position: relative; border-radius: 10px; overflow: hidden;
+}
+.diagram-open img { display: block; width: 100%; height: auto; border-radius: 10px; }
+.diagram-cue {
+  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em;
+  color: var(--bg); background: var(--accent);
+  padding: 6px 12px; border-radius: 999px; white-space: nowrap;
+  opacity: 0; transition: opacity 0.18s ease; pointer-events: none;
+}
+.diagram-open:hover .diagram-cue,
+.diagram-open:focus-visible .diagram-cue { opacity: 1; }
+.diagram-open:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.dgv {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(8, 9, 12, 0.97);
+  display: flex; flex-direction: column;
+}
+.dgv-bar {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.dgv-title { color: #fff; font-weight: 600; font-size: 14px; }
+.dgv-hint {
+  font-family: var(--mono); font-size: 11.5px; color: var(--muted);
+  letter-spacing: 0.04em;
+}
+.dgv-btns { margin-left: auto; display: flex; gap: 8px; }
+.dgv-btns button {
+  min-width: 38px; height: 34px; padding: 0 10px;
+  font-family: var(--mono); font-size: 15px; line-height: 1;
+  color: var(--text); background: var(--bg);
+  border: 1px solid var(--border); border-radius: 7px; cursor: pointer;
+}
+.dgv-btns button:hover { border-color: var(--accent); color: var(--accent); }
+
+.dgv-stage {
+  position: relative; flex: 1; overflow: hidden;
+  cursor: grab; touch-action: none;
+}
+.dgv-stage.grabbing { cursor: grabbing; }
+.dgv-stage img {
+  position: absolute; top: 0; left: 0;
+  transform-origin: 0 0; max-width: none; user-select: none;
+  -webkit-user-drag: none; image-rendering: auto;
+}
+.dgv-loading {
+  position: absolute; inset: 0; display: flex;
+  align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 13px; color: var(--muted);
+  text-align: center; padding: 0 24px;
+}
+
+@media (max-width: 640px) {
+  .dgv-hint { display: none; }
+  .diagram-cue { font-size: 11px; bottom: 8px; }
+}
