@@ -26,19 +26,10 @@
       controls, a 360° camera rig, and an onboard neural network that learns
       to drive it.</p>
 
-    <!-- hero video: shows the real file when it exists in assets/,
-         otherwise the labeled placeholder box below. Nothing to edit here —
-         just drop the correctly-named file into assets/. -->
     <figure class="media">
       <video autoplay muted loop playsinline poster="assets/hero-poster.jpg">
         <source src="assets/hero.mp4" type="video/mp4">
       </video>
-      <div class="media-slot wide" aria-label="Hero video placeholder">
-        <span class="slot-kind">VIDEO</span>
-        <span class="slot-name">assets/hero.mp4</span>
-        <p class="slot-desc">Short muted loop of the cart driving — autonomous
-          footage when it exists, Xbox-controller driving until then.</p>
-      </div>
     </figure>
   </div>
 </header>
@@ -64,20 +55,11 @@
       reversible: unplug the intercept harness and unbolt a couple of
       brackets, and the cart is stock again.</p>
 
-    <!-- overview photo: shows the real file when it exists in assets/,
-         otherwise the labeled placeholder box below. Nothing to edit here —
-         just drop the correctly-named file into assets/. -->
     <figure class="media">
       <video muted loop playsinline preload="metadata" data-autoplay
              aria-label="The TeslaCart — a 2015 Club Car Precedent with the camera rail and retrofit electronics visible">
         <source src="assets/cart-wide.mp4" type="video/mp4">
       </video>
-      <div class="media-slot" aria-label="Overview photo placeholder">
-        <span class="slot-kind">VIDEO</span>
-        <span class="slot-name">assets/cart-wide.mp4</span>
-        <p class="slot-desc">Wide shot of the finished cart — camera rail under
-          the roof, electronics visible.</p>
-      </div>
     </figure>
     <hr class="sec-rule">
   </div>
@@ -221,9 +203,6 @@
       Jetson from the brake actuator, so motor inrush can't brown out the
       computer mid-drive.</p>
 
-    <!-- wiring / architecture diagram: shows the real file when it exists in assets/,
-         otherwise the labeled placeholder box below. Nothing to edit here —
-         just drop the correctly-named file into assets/. -->
     <!-- The live draw.io diagram: the real .drawio file rendered by draw.io's own
          viewer, so it is identical to the editor and stays vector at any zoom.
          Loads only when scrolled into view. -->
@@ -236,20 +215,11 @@
         fullscreen button for a closer look.</figcaption>
     </figure>
 
-    <!-- electronics close-up: shows the real file when it exists in assets/,
-         otherwise the labeled placeholder box below. Nothing to edit here —
-         just drop the correctly-named file into assets/. -->
     <figure class="media">
       <video muted loop playsinline preload="metadata" data-autoplay
              aria-label="Close-up of the retrofit electronics: Arduino Mega, relay board, motor drivers, and busbars">
         <source src="assets/electronics-closeup.mp4" type="video/mp4">
       </video>
-      <div class="media-slot" aria-label="Electronics close-up placeholder">
-        <span class="slot-kind">VIDEO</span>
-        <span class="slot-name">assets/electronics-closeup.mp4</span>
-        <p class="slot-desc">Close-up of the Arduino, relays, motor drivers, and
-          busbars.</p>
-      </div>
     </figure>
     <hr class="sec-rule">
   </div>
@@ -357,21 +327,12 @@
         logged now, added later.</li>
     </ul>
 
-    <!-- object-detection screenshot: shows the real file when it exists in assets/,
-         otherwise the labeled placeholder box below. Nothing to edit here —
-         just drop the correctly-named file into assets/. -->
     <figure class="media">
       <video muted loop playsinline preload="metadata" data-autoplay
              aria-label="Live object detection on the Jetson with real-time bounding boxes">
         <source src="assets/detectnet.mp4" type="video/mp4">
       </video>
       <figcaption>SSD-MobileNet running under TensorRT on the Jetson — the base of the safety-override detector.</figcaption>
-      <div class="media-slot" aria-label="Object detection screenshot placeholder">
-        <span class="slot-kind">VIDEO</span>
-        <span class="slot-name">assets/detectnet.mp4</span>
-        <p class="slot-desc">The Jetson running live object detection with
-          real-time bounding boxes.</p>
-      </div>
     </figure>
     <hr class="sec-rule">
   </div>
@@ -398,6 +359,13 @@
           then <strong>road-tested on the cart under load</strong> — from a
           25% crawl to full throttle. Includes a serial watchdog that zeroes
           throttle on signal loss.</p>
+        <figure class="media">
+          <video muted loop playsinline preload="metadata" data-autoplay
+                 aria-label="The throttle intercept circuit in its test enclosure">
+            <source src="assets/throttle-box.mp4" type="video/mp4">
+          </video>
+          <figcaption>The throttle intercept in its test box — Arduino Mega, relay board and the digital-pot circuit that impersonates the pedal.</figcaption>
+        </figure>
       </li>
 
       <li class="phase is-done">
@@ -407,20 +375,11 @@
           Lock-to-lock calibrated (usable range ±7000 steps). Driven live from
           an Xbox controller with self-centering, absolute-position
           steering.</p>
-        <!-- steering test video: shows the real file when it exists in assets/,
-             otherwise the labeled placeholder box below. Nothing to edit here —
-             just drop the correctly-named file into assets/. -->
         <figure class="media">
           <video muted loop playsinline preload="metadata" data-autoplay>
             <source src="assets/steering-test.mp4" type="video/mp4">
           </video>
-          <figcaption>Lock-to-lock steering and self-centering, cart on stands.</figcaption>
-          <div class="media-slot" aria-label="Steering test video placeholder">
-            <span class="slot-kind">VIDEO</span>
-            <span class="slot-name">assets/steering-test.mp4</span>
-            <p class="slot-desc">Steering test — wheels turning lock-to-lock and
-              self-centering on stands.</p>
-          </div>
+          <figcaption>The steering circuit — HBS86H driver, controller and motor cable — laid out before it went on the cart.</figcaption>
         </figure>
       </li>
 
@@ -436,21 +395,6 @@
           tension-only, the pedal still overrides it and a snapped cable
           releases the brakes. Reporting the fader position back to the Jetson
           (brake telemetry) is the next step — see the roadmap.</p>
-        <!-- brake bench test video: shows the real file when it exists in assets/,
-             otherwise the labeled placeholder box below. Nothing to edit here —
-             just drop the correctly-named file into assets/. -->
-        <figure class="media">
-          <video muted loop playsinline preload="metadata" data-autoplay>
-            <source src="assets/brake-bench.mp4" type="video/mp4">
-          </video>
-          <figcaption>Brake actuator bench test — variable-speed control over serial.</figcaption>
-          <div class="media-slot" aria-label="Brake bench test video placeholder">
-            <span class="slot-kind">VIDEO</span>
-            <span class="slot-name">assets/brake-bench.mp4</span>
-            <p class="slot-desc">Brake actuator bench test — variable-speed
-              extend/retract under serial control.</p>
-          </div>
-        </figure>
       </li>
 
       <li class="phase is-done">
@@ -472,20 +416,11 @@
           expo-shaped sensitivity, gradual throttle on the right trigger,
           streamed at ~50&nbsp;Hz with a fail-safe that zeroes throttle if the
           link drops. Reverse was added afterwards — see Phase&nbsp;7.</p>
-        <!-- controller driving video: shows the real file when it exists in assets/,
-             otherwise the labeled placeholder box below. Nothing to edit here —
-             just drop the correctly-named file into assets/. -->
         <figure class="media">
           <video muted loop playsinline preload="metadata" data-autoplay>
             <source src="assets/drive-test.mp4" type="video/mp4">
           </video>
           <figcaption>Controller-driven test on the ground.</figcaption>
-          <div class="media-slot" aria-label="Controller drive video placeholder">
-            <span class="slot-kind">VIDEO</span>
-            <span class="slot-name">assets/drive-test.mp4</span>
-            <p class="slot-desc">Full controller-drive clip on the ground —
-              throttle + steering from the Xbox controller.</p>
-          </div>
         </figure>
       </li>
 
@@ -500,21 +435,6 @@
           Every connection is documented pin-for-pin in the build repo's wiring
           reference, and the negative busbar is the single ground star that
           every subsystem lands on.</p>
-        <!-- power trunk video: shows the real file when it exists in assets/,
-             otherwise the labeled placeholder box below. Nothing to edit here —
-             just drop the correctly-named file into assets/. -->
-        <figure class="media">
-          <video muted loop playsinline preload="metadata" data-autoplay>
-            <source src="assets/power-distribution.mp4" type="video/mp4">
-          </video>
-          <figcaption>Master switch, fusing and busbars wired on the cart.</figcaption>
-          <div class="media-slot" aria-label="Power distribution video placeholder">
-            <span class="slot-kind">VIDEO</span>
-            <span class="slot-name">assets/power-distribution.mp4</span>
-            <p class="slot-desc">Walkthrough of the power trunk — master switch,
-              main fuse, busbars, and the fused branches.</p>
-          </div>
-        </figure>
       </li>
 
       <li class="phase is-done">
@@ -527,20 +447,6 @@
           rocker is in charge, same fail-safe pattern as the throttle. Reverse
           is in firmware and only ever switches at a verified standstill. No
           new hardware — existing relay channels and Arduino pins.</p>
-        <!-- reverse test video: shows the real file when it exists in assets/,
-             otherwise the labeled placeholder box below. Nothing to edit here —
-             just drop the correctly-named file into assets/. -->
-        <figure class="media">
-          <video muted loop playsinline preload="metadata" data-autoplay>
-            <source src="assets/reverse-test.mp4" type="video/mp4">
-          </video>
-          <figcaption>Direction switching from the controller — forward to reverse at a standstill.</figcaption>
-          <div class="media-slot" aria-label="Reverse test video placeholder">
-            <span class="slot-kind">VIDEO</span>
-            <span class="slot-name">assets/reverse-test.mp4</span>
-            <p class="slot-desc">Forward/reverse switching under computer control.</p>
-          </div>
-        </figure>
       </li>
 
       <li class="phase is-done">
@@ -560,6 +466,13 @@
           automatically at boot by a systemd service — verified across a real
           reboot, no manual step. Housings are printed; mounting the rail on the
           cart and retuning exposure outdoors are what's left.</p>
+        <figure class="media">
+          <video muted loop playsinline preload="metadata" data-autoplay
+                 aria-label="Bench setup for the first six-camera test on the Jetson">
+            <source src="assets/camera-bringup.mp4" type="video/mp4">
+          </video>
+          <figcaption>Bench setup for the first six-camera run — all six U20CAM modules staged next to the Jetson.</figcaption>
+        </figure>
       </li>
 
       <li class="phase is-wip">
@@ -907,23 +820,24 @@ window.__onView = function (fn) {
      into assets/ — no HTML edits, ever.
      ================================================================ -->
 <script>
+// If a media file ever fails to load, hide that figure outright rather than
+// leaving a broken frame on the page.
 (function () {
   var figs = document.querySelectorAll('figure.media');
   Array.prototype.forEach.call(figs, function (fig) {
-    if (!fig.querySelector('.media-slot')) return;          // no fallback to show
-    var missing = function () { fig.classList.add('is-missing'); };
+    var gone = function () { fig.classList.add('is-missing'); };
 
     Array.prototype.forEach.call(fig.querySelectorAll('img'), function (img) {
-      img.addEventListener('error', missing);
-      if (img.complete && img.naturalWidth === 0) missing(); // already failed
+      img.addEventListener('error', gone);
+      if (img.complete && img.naturalWidth === 0) gone();
     });
 
     Array.prototype.forEach.call(fig.querySelectorAll('video'), function (vid) {
       Array.prototype.forEach.call(vid.querySelectorAll('source'), function (s) {
-        s.addEventListener('error', missing);                // <source> 404s here
+        s.addEventListener('error', gone);
       });
-      vid.addEventListener('error', missing);
-      if (vid.networkState === 3) missing();                 // NETWORK_NO_SOURCE
+      vid.addEventListener('error', gone);
+      if (vid.networkState === 3) gone();
     });
   });
 })();

@@ -137,73 +137,6 @@ hr.sec-rule {
   margin: 64px 0 0;
 }
 
-/* ---------- media placeholder slots ---------- */
-
-.media-slot {
-  margin: 34px 0;
-  border: 1.5px dashed var(--accent-dim);
-  border-radius: 10px;
-  background: rgba(242, 163, 60, 0.04);
-  padding: 34px 26px;
-  text-align: center;
-}
-
-.media-slot .slot-kind {
-  display: inline-block;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  color: var(--bg);
-  background: var(--accent);
-  border-radius: 3px;
-  padding: 3px 8px;
-  margin-bottom: 10px;
-}
-
-.media-slot .slot-name {
-  display: block;
-  font-family: var(--mono);
-  font-size: 14px;
-  color: var(--accent);
-  margin-bottom: 8px;
-  word-break: break-all;
-}
-
-.media-slot .slot-desc {
-  margin: 0 auto;
-  max-width: 560px;
-  font-size: 14.5px;
-  color: var(--muted);
-}
-
-.media-slot.wide { padding: 56px 26px; }
-
-/* real media, once dropped in */
-.media-slot img, .media-slot video,
-figure.media img, figure.media video {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  display: block;
-  margin: 0 auto;
-}
-
-figure.media { margin: 34px 0; }
-
-/* Auto-swap: a real media figure keeps its labeled placeholder box tucked away
-   and only reveals it if the file isn't in assets/ yet (see the script at the
-   bottom of index.html). Drop the file in, the real photo/video takes over. */
-figure.media > .media-slot { display: none; margin: 0; }
-figure.media.is-missing > .media-slot { display: block; }
-figure.media.is-missing > img,
-figure.media.is-missing > video,
-figure.media.is-missing > figcaption { display: none; }
-figcaption {
-  font-size: 14px;
-  color: var(--faint);
-  text-align: center;
-  margin-top: 10px;
-}
 
 /* ---------- spec / key-value cards ---------- */
 
@@ -431,7 +364,6 @@ footer .foot-note { font-family: var(--mono); font-size: 12.5px; letter-spacing:
   .kv > div { grid-template-columns: 1fr; gap: 2px; padding: 12px 16px; }
   .kv dt { padding-top: 0; }
   .d-box .d-rate { float: none; display: block; padding: 4px 0 0; }
-  .media-slot { padding: 26px 16px; }
   .phase { padding-left: 26px; }
 }
 
