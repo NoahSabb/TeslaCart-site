@@ -164,13 +164,13 @@
       </div>
       <div class="card">
         <h4>Forward / Reverse
-          <span class="status-inline st-wip">wires located, not yet traced</span></h4>
+          <span class="status-inline st-wip">relays + firmware drafted, harness not yet traced</span></h4>
         <p>The cart's direction-select signals are intercepted with relays so
           direction can be set in firmware — same reversible T-harness
           pattern as the throttle.</p>
         <p>Firmware only ever switches direction at a verified standstill.
-          Harness tracing and relay wiring are still to do — see the build
-          log.</p>
+          The relay topology and firmware are drafted; meter-testing the
+          harness is still to do — see the build log.</p>
       </div>
     </div>
 
@@ -189,12 +189,17 @@
       <li><strong>6× Innomaker U20CAM-1080P</strong> USB cameras — 1080p @
         30&nbsp;fps, MJPEG, native UVC, ~130° diagonal field of view each.</li>
       <li><strong>Surround layout:</strong> front-center, two front corners
-        (≈±60°), two rear corners (≈±120°), and rear-center — mounted on PVC
-        rails under the roof lip with cabling routed inside the rail.</li>
-      <li>MJPEG compression is what makes six simultaneous USB streams
-        feasible on the available bandwidth. The driving model consumes up to
-        three streams per timestep, selected by driving direction — front
-        cameras going forward, rear cameras in reverse.</li>
+        (≈±60°), two rear corners (≈±120°), and rear-center — to be mounted on
+        PVC rails under the roof lip with cabling routed inside the rail.
+        Housings are printed; the rail is not on the cart yet.</li>
+      <li><strong>All six stream at once — verified.</strong> MJPEG compression
+        is necessary but not sufficient: these cameras over-declare their USB
+        bandwidth, so stock Linux only lets two stream per controller. A
+        patched <code>uvcvideo</code> kernel driver that clamps the reservation,
+        plus splitting the hubs across two USB root ports, gets all six running
+        at 1080p30 (20–27&nbsp;fps each, zero dropped frames). The driving
+        model consumes up to three streams per timestep, selected by driving
+        direction — front cameras going forward, rear cameras in reverse.</li>
       <li>Cameras are powered from the cart through powered USB hubs (fed by
         a wide-input DC-DC buck converter off the battery busbars), so camera
         load and heat stay off the Jetson — its port carries data only.</li>
@@ -333,9 +338,18 @@
         controller</strong>. The controller inputs <em>are</em> the training
         labels — the model learns to reproduce the commands the human issued.</li>
       <li>Each logged record: <code>timestamp, 6 camera frames, commanded
-        steering / throttle / direction</code> at ~30&nbsp;Hz, stored in the
-        LeRobot dataset format. Brake logs the <em>actual</em> potentiometer
-        position — continuous feedback, not just the command.</li>
+        steering / throttle / direction</code> at 10–15&nbsp;Hz, converted
+        offline to the LeRobot dataset format. Brake logs the <em>actual</em>
+        potentiometer position — continuous feedback, not just the command.</li>
+      <li><strong>Every episode carries a language instruction</strong>, because
+        the model is language-conditioned: a closed vocabulary — <em>follow the
+        road</em>, <em>turn left at the intersection</em>, <em>turn right at the
+        intersection</em> — chosen on the controller before each 15–30&nbsp;s
+        episode, so the label is captured at record time, not reconstructed
+        later. At drive time the same strings come from a deterministic routing
+        layer (GPS snapped to an OpenStreetMap road graph); the model never sees
+        a map, and GPS stays out of its inputs so it can't memorize
+        intersections by coordinate.</li>
       <li>Target: roughly <strong>5–10 hours of clean driving</strong> (~20–30
         short sessions), including deliberate <strong>recovery
         episodes</strong> — drift off-center, then correct — to teach the
@@ -446,7 +460,9 @@
         <p>Jetson Orin Nano set up on JetPack 6.2.1, root filesystem migrated
           from microSD to the NVMe SSD, and live object detection running via
           TensorRT (SSD-MobileNet with real-time bounding boxes) — proving the
-          capture → neural net → render loop the driving model will use.</p>
+          capture → neural net → render loop the driving model will use. Since
+          then it runs headless: Tailscale + key-based SSH, no monitor or
+          keyboard needed.</p>
       </li>
 
       <li class="phase is-done">
@@ -477,38 +493,71 @@
       <li class="phase is-wip">
         <span class="phase-date">August 2026</span>
         <h3>Phase 6 — Power distribution <span class="tag tag--wip">🟡 In progress</span></h3>
-        <p>Master disconnect switch and busbars <strong>ordered</strong>; main
-          + branch fusing planned. Wiring the trunk — switch → fuse → busbars
-          → branches — is pending parts arrival.</p>
+        <p>Master disconnect switch, busbars, fuse holders, and the DC-DC
+          converters for the Jetson and the cameras are <strong>in hand</strong>,
+          and the full trunk — switch → main fuse → busbars → individually fused
+          branches — is documented pin-for-pin. Landing it on the cart is what's
+          left; on the bench the camera hubs still run from wall bricks rather
+          than the buck.</p>
       </li>
 
       <li class="phase is-wip">
         <span class="phase-date">August 2026</span>
         <h3>Phase 7 — Forward / Reverse <span class="tag tag--wip">🟡 In progress</span></h3>
-        <p>Direction-select wires located on the cart. Still to do: meter-test
-          the 3-wire harness (identify forward/reverse/common and signal
-          polarity), wire the two relays, and add reverse to firmware. Uses
-          existing relay channels and Arduino pins — no new hardware.</p>
+        <p>Direction-select wires located on the cart, the two-relay topology
+          (real-vs-computer handoff, then forward/reverse select) is final, and
+          the firmware is drafted. Still to do — and it gates everything else
+          here: meter-test the 3-wire harness to identify forward/reverse/common
+          and signal polarity, then wire the relays. Uses existing relay channels
+          and Arduino pins — no new hardware.</p>
+      </li>
+
+      <li class="phase is-done">
+        <span class="phase-date">August 23–30, 2026</span>
+        <h3>Phase 8 — Camera subsystem <span class="tag tag--done">✅ Six streams validated</span> <span class="tag tag--wip">🟡 not yet mounted</span></h3>
+        <p>The gating test <strong>passed: all six cameras stream 1080p30 MJPEG
+          concurrently on the Jetson</strong> — 20–27&nbsp;fps each, zero failed
+          grabs, zero corrupt frames. Getting there took real driver work. Out
+          of the box only <em>two</em> cameras would stream: they declare far
+          more USB bandwidth than MJPEG actually needs, and the kernel reserves
+          what they ask for. Root-caused it, then built and installed a
+          <strong>patched <code>uvcvideo</code> kernel module</strong> that
+          clamps the reservation, and split the two hubs across separate USB
+          root ports for a second bandwidth budget. Cameras are identified by
+          stable port paths (never <code>/dev/videoN</code>, which shuffles on
+          every reboot), and exposure / line-frequency settings are applied
+          automatically at boot by a systemd service — verified across a real
+          reboot, no manual step. Housings are printed; mounting the rail on the
+          cart and retuning exposure outdoors are what's left.</p>
       </li>
 
       <li class="phase is-wip">
-        <span class="phase-date">August 2026</span>
-        <h3>Phase 8 — Camera subsystem <span class="tag tag--wip">🟡 In progress</span></h3>
-        <p>Six-camera 360° rig <strong>decided and ordered</strong> — cameras,
-          powered hubs, buck converter. Mounts (printed housings on PVC rails)
-          are designed but not yet built, waiting on parts to measure and CAD.
-          <strong>Six-simultaneous-stream validation has not yet been run</strong>
-          — that's the gating test before mounts and cable lengths are
-          finalized.</p>
+        <span class="phase-date">August 30, 2026</span>
+        <h3>Phase 9 — GPS &amp; routing layer <span class="tag tag--wip">🟡 In progress</span></h3>
+        <p>Receiver and antenna <strong>ordered</strong>: a u-blox NEO-F10N
+          (dual-band L1/L5 with multipath mitigation, ~1.5&nbsp;m accuracy) and a
+          multi-band active antenna — deliberately the more expensive half,
+          since the antenna decides how many satellites are actually heard. Its
+          job is decided and narrow: stamp training data with position and
+          speed, and later feed a <strong>deterministic routing layer</strong>
+          that snaps to an OpenStreetMap road graph and publishes a single
+          instruction string to the driving model. GPS ground speed also covers
+          the "only steer while rolling" interlock. Integration not started;
+          first step is a plain outdoor fix before enabling the L5 band.</p>
       </li>
 
       <li class="phase">
         <span class="phase-date">Upcoming</span>
-        <h3>Phase 9 — Autonomy (VLA training) <span class="tag tag--plan">⬜ Planned</span></h3>
-        <p>Not started. Depends on hardware-complete — drives on the
-          controller with all six cameras streaming reliably — so that data
-          collection can begin. Plan: fine-tune a pretrained VLA on
-          RC-collected driving data, then layer in the safety override.</p>
+        <h3>Phase 10 — Autonomy (VLA training) <span class="tag tag--plan">⬜ Planned</span></h3>
+        <p>Not started, but designed. Data collection is specified —
+          language-conditioned episodes with a frozen instruction vocabulary, labeled at
+          record time from the controller, 100+ episodes per maneuver across
+          many intersections — and an inference benchmark is written to size
+          what six camera views cost in latency and memory on the Jetson.
+          Depends on hardware-complete — drives on the controller with the
+          cameras mounted — so that collection can begin. Plan: fine-tune a
+          pretrained VLA on the collected driving data, then layer in the
+          safety override.</p>
       </li>
     </ol>
     <hr class="sec-rule">
@@ -523,11 +572,14 @@
     <p class="sec-label">05 · Roadmap</p>
     <h2>What's next</h2>
     <ul class="next-list">
-      <li>Finish forward/reverse wiring and fold it into the firmware</li>
-      <li>Complete power distribution — master switch, busbars, fusing — and final electronics integration</li>
-      <li>Validate all six cameras streaming simultaneously, then build and mount the camera rail</li>
-      <li>Reach <strong>hardware complete</strong>: the cart drives on the controller with all six cameras streaming and full state feedback</li>
-      <li>Begin data collection — log synchronized camera + command data while driving manually</li>
+      <li>Brake telemetry — the Arduino reports the actual brake-pedal position back to the Jetson, so logged brake labels are real</li>
+      <li>Move the Xbox controller to the Jetson over Bluetooth and write the combined drive-and-log script — control and logging in one loop</li>
+      <li>Meter-test the forward/reverse harness and fold reverse into the firmware</li>
+      <li>Land power distribution on the cart — master switch, busbars, fusing — and power the camera hubs from the buck instead of wall bricks</li>
+      <li>Mount the camera rail (housings are printed) and retune exposure outdoors</li>
+      <li>GPS bring-up: a plain outdoor fix first, then the one-time L5 enable</li>
+      <li>Reach <strong>hardware complete</strong>: the cart drives on the controller with all six cameras mounted and full state feedback</li>
+      <li>Begin data collection — labeled, language-conditioned episodes of synchronized camera + command data while driving manually</li>
       <li>Fine-tune the VLA, deploy it on the Jetson, and bring up the safety-override layer — one layer at a time, safety first</li>
       <li>Longer term: add LiDAR — an independent, depth-sensing obstacle-detection layer alongside the cameras</li>
       <li>Keep a human in the seat throughout — Level-2, always overridable</li>
