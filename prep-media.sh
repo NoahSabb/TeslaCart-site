@@ -24,7 +24,7 @@ cd "$(dirname "$0")"
 # Only genuine stills (CAD render, diagram export, social card) are images.
 SLOTS="hero:mp4 hero-poster:jpg cart-wide:mp4 wiring-diagram:png \
 electronics-closeup:mp4 detectnet:mp4 steering-test:mp4 brake-bench:mp4 \
-drive-test:mp4 camera-mount-cad:png social-card:jpg"
+drive-test:mp4 social-card:jpg"
 
 MAXW=2000        # max image width in px
 VIDH="${VIDH:-1080}"   # max video height in px. Override: VIDH=720 ./prep-media.sh ...

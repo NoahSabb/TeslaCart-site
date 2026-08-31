@@ -174,14 +174,14 @@
       </div>
     </div>
 
-    <h3>The steering mount, in 3D</h3>
-    <p>The bracket that carries the NEMA&nbsp;34 stepper on the column. Drag to
-      spin it, scroll to zoom — this is the actual printed part, loaded straight
-      from the STL in the build repo.</p>
+    <h3>The steering assembly, in 3D</h3>
+    <p>The full steering assembly — motor mount, bracketry and column hardware
+      together. Drag to spin it, scroll to zoom; this is the real CAD, loaded
+      straight from the STL in the build repo.</p>
     <figure class="media">
-      <div class="m3d" data-stl="assets/steering-motor-mount.stl"
-           data-label="Steering motor mount — drag to spin"></div>
-      <figcaption>Steering motor mount / harness — printed part, shown from the source STL.</figcaption>
+      <div class="m3d" data-stl="assets/steering-full.stl"
+           data-label="Full steering assembly — drag to spin"></div>
+      <figcaption>Full steering assembly — shown from the source STL.</figcaption>
     </figure>
 
     <h3>Cameras — 360° vision</h3>
@@ -200,13 +200,13 @@
         load and heat stay off the Jetson — its port carries data only.</li>
     </ul>
 
-    <h3>The camera harness, in 3D</h3>
-    <p>The printed harness that clamps each camera to the PVC rail under the
-      roof lip. Same deal — drag to spin, scroll to zoom.</p>
+    <h3>The camera setup, in 3D</h3>
+    <p>The full camera setup — housings and rail hardware together. Same deal —
+      drag to spin, scroll to zoom.</p>
     <figure class="media">
-      <div class="m3d" data-stl="assets/camera-harness.stl"
-           data-label="Camera harness — drag to spin"></div>
-      <figcaption>Camera rail harness — printed part, shown from the source STL.</figcaption>
+      <div class="m3d" data-stl="assets/camera-full.stl"
+           data-label="Full camera setup — drag to spin"></div>
+      <figcaption>Full camera setup — shown from the source STL.</figcaption>
     </figure>
 
     <h3>Power distribution</h3>
@@ -500,19 +500,6 @@
           <strong>Six-simultaneous-stream validation has not yet been run</strong>
           — that's the gating test before mounts and cable lengths are
           finalized.</p>
-        <!-- camera mount CAD render: shows the real file when it exists in assets/,
-             otherwise the labeled placeholder box below. Nothing to edit here —
-             just drop the correctly-named file into assets/. -->
-        <figure class="media">
-          <img src="assets/camera-mount-cad.png" alt="CAD render of the camera housing and rail mount">
-          <figcaption>Camera housing / rail mount, designed in Fusion 360.</figcaption>
-          <div class="media-slot" aria-label="Camera mount CAD placeholder">
-            <span class="slot-kind">IMAGE</span>
-            <span class="slot-name">assets/camera-mount-cad.png</span>
-            <p class="slot-desc">CAD render of the camera housing / rail
-              mount.</p>
-          </div>
-        </figure>
       </li>
 
       <li class="phase">
@@ -615,6 +602,9 @@ window.__onView = function (fn) {
 
     var W = el.clientWidth, H = el.clientHeight || Math.round(W * 0.62);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;   // stops the highlights blowing out
+    renderer.toneMappingExposure = 0.95;
     renderer.setSize(W, H);
     el.appendChild(renderer.domElement);
 
@@ -627,9 +617,9 @@ window.__onView = function (fn) {
     controls.autoRotateSpeed = 1.6;
     controls.addEventListener('start', function () { controls.autoRotate = false; });
 
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x202028, 0.85));
-    var key = new THREE.DirectionalLight(0xffffff, 1.15); key.position.set(1, 1.4, 1.2);
-    var rim = new THREE.DirectionalLight(0xffd9a0, 0.55); rim.position.set(-1.3, 0.4, -1);
+    scene.add(new THREE.HemisphereLight(0xdfe6f2, 0x14161c, 0.55));
+    var key = new THREE.DirectionalLight(0xffffff, 0.85); key.position.set(1, 1.4, 1.2);
+    var rim = new THREE.DirectionalLight(0xffd9a0, 0.35); rim.position.set(-1.3, 0.4, -1);
     scene.add(key); scene.add(rim);
 
     var label = document.createElement('span');
@@ -646,7 +636,7 @@ window.__onView = function (fn) {
       geo.computeVertexNormals();
       geo.center();
       var mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
-        color: 0xf2a33c, roughness: 0.52, metalness: 0.18, flatShading: false
+        color: 0xd98f33, roughness: 0.62, metalness: 0.06, flatShading: false
       }));
       scene.add(mesh);
 
