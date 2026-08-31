@@ -768,42 +768,14 @@ window.__onView = function (fn) {
             xml: xml,
             toolbar: 'zoom layers lightbox',
             toolbarPosition: 'top',
-            // resize:false keeps the container at the size CSS gives it, so
-            // zooming pans inside a fixed frame instead of growing the box
-            resize: false, fit: true, center: true,
+            resize: true, fit: true, center: true,
             zoomEnabled: true, nav: true, lightbox: true,
             // the diagram's colours are light-dark() pairs; the dark side is the
             // one with the real wire colours, which is how it looks in draw.io
             'dark-mode': true,
             highlight: '#f2a33c'
           }));
-          GraphViewer.createViewerForElement(el, function (viewer) {
-            // centre on the drawing itself, not on the (much larger) page canvas
-            // The embedded viewer ignores zoomTo/center, so the drawing is
-            // centred and fitted with a CSS transform on its rendered SVG
-            // instead. Scroll-zoom still works; it simply composes with this.
-            var fit = function () {
-              var svg = el.querySelector('svg');
-              var inner = svg && svg.querySelector('g');
-              if (!svg || !inner) return;
-              svg.style.transformOrigin = 'center center';
-              svg.style.transform = '';
-              var box = el.getBoundingClientRect();
-              var art = inner.getBoundingClientRect();
-              if (!art.width || !art.height) return;
-              // scale first, then measure again - the offset has to be computed
-              // in the scaled frame or the centring lands short
-              var k = Math.min(box.width / art.width, box.height / art.height, 1) * 0.96;
-              svg.style.transform = 'scale(' + k + ')';
-              var scaled = inner.getBoundingClientRect();
-              var dx = (box.left + box.width / 2) - (scaled.left + scaled.width / 2);
-              var dy = (box.top + box.height / 2) - (scaled.top + scaled.height / 2);
-              svg.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + k + ')';
-            };
-            fit();
-            [200, 700, 1600].forEach(function (d) { setTimeout(fit, d); });
-            el.__refit = fit;
-          });
+          GraphViewer.createViewerForElement(el);
           el.classList.add('dio-ready');
           var s = el.querySelector('.dio-status');
           if (s) s.remove();
@@ -823,14 +795,6 @@ window.__onView = function (fn) {
       mount(el);
       return false;
     });
-  });
-
-  var t;
-  window.addEventListener('resize', function () {
-    clearTimeout(t);
-    t = setTimeout(function () {
-      mounts.forEach(function (el) { if (el.__refit) el.__refit(); });
-    }, 150);
   });
 })();
 </script>
