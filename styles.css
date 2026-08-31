@@ -197,6 +197,7 @@ figure.media > .media-slot { display: none; margin: 0; }
 figure.media.is-missing > .media-slot { display: block; }
 figure.media.is-missing > img,
 figure.media.is-missing > video,
+figure.media.is-missing > .diagram-open,
 figure.media.is-missing > figcaption { display: none; }
 figcaption {
   font-size: 14px;
