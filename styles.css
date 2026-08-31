@@ -487,6 +487,9 @@ footer .foot-note { font-family: var(--mono); font-size: 12.5px; letter-spacing:
   transform-origin: 0 0; max-width: none; user-select: none;
   -webkit-user-drag: none; image-rendering: auto;
 }
+/* [hidden] must win over display:flex, or the loading text stays painted
+   on top of the diagram after it loads */
+.dgv-loading[hidden] { display: none; }
 .dgv-loading {
   position: absolute; inset: 0; display: flex;
   align-items: center; justify-content: center;
