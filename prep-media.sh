@@ -25,7 +25,7 @@ cd "$(dirname "$0")"
 SLOTS="hero:mp4 hero-poster:jpg cart-wide:mp4 \
 electronics-closeup:mp4 detectnet:mp4 steering-test:mp4 brake-bench:mp4 \
 drive-test:mp4 power-distribution:mp4 reverse-test:mp4 social-card:jpg \
-throttle-box:mp4 camera-bringup:mp4"
+throttle-box:mp4 camera-bringup:mp4 soldering:mp4"
 
 MAXW=2000        # max image width in px
 VIDH="${VIDH:-1080}"   # max video height in px. Override: VIDH=720 ./prep-media.sh ...
