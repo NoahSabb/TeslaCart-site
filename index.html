@@ -174,6 +174,16 @@
       </div>
     </div>
 
+    <h3>The steering mount, in 3D</h3>
+    <p>The bracket that carries the NEMA&nbsp;34 stepper on the column. Drag to
+      spin it, scroll to zoom — this is the actual printed part, loaded straight
+      from the STL in the build repo.</p>
+    <figure class="media">
+      <div class="m3d" data-stl="assets/steering-motor-mount.stl"
+           data-label="Steering motor mount — drag to spin"></div>
+      <figcaption>Steering motor mount / harness — printed part, shown from the source STL.</figcaption>
+    </figure>
+
     <h3>Cameras — 360° vision</h3>
     <ul>
       <li><strong>6× Innomaker U20CAM-1080P</strong> USB cameras — 1080p @
@@ -189,6 +199,15 @@
         a wide-input DC-DC buck converter off the battery busbars), so camera
         load and heat stay off the Jetson — its port carries data only.</li>
     </ul>
+
+    <h3>The camera harness, in 3D</h3>
+    <p>The printed harness that clamps each camera to the PVC rail under the
+      roof lip. Same deal — drag to spin, scroll to zoom.</p>
+    <figure class="media">
+      <div class="m3d" data-stl="assets/camera-harness.stl"
+           data-label="Camera harness — drag to spin"></div>
+      <figcaption>Camera rail harness — printed part, shown from the source STL.</figcaption>
+    </figure>
 
     <h3>Power distribution</h3>
     <p>48&nbsp;V pack → master battery-disconnect switch → main fuse →
@@ -543,6 +562,134 @@
     <div class="foot-note">A human sits in the driver's seat for every test. No exceptions.</div>
   </div>
 </footer>
+
+<!-- ================================================================
+     INTERACTIVE 3D PARTS
+     Each .m3d div loads a real STL from the build repo and renders it live:
+     drag to spin, scroll to zoom, double-click to reset. It idles on a slow
+     auto-spin until you touch it. WebGL is only started once the part scrolls
+     into view, and three.js is vendored locally (assets/vendor) so the page
+     makes no external requests.
+     ================================================================ -->
+<script src="assets/vendor/three.min.js"></script>
+<script src="assets/vendor/OrbitControls.js"></script>
+<script src="assets/vendor/STLLoader.js"></script>
+<script>
+(function () {
+  var mounts = document.querySelectorAll('.m3d');
+  if (!mounts.length) return;
+
+  function fail(el, msg) {
+    el.classList.add('m3d-failed');
+    el.innerHTML = '<span class="m3d-msg">' + msg + '</span>';
+  }
+  if (!window.THREE || !THREE.WebGLRenderer) {
+    Array.prototype.forEach.call(mounts, function (el) { fail(el, '3D viewer unavailable'); });
+    return;
+  }
+
+  function build(el) {
+    var url = el.getAttribute('data-stl');
+    var scene = new THREE.Scene();
+    var renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    } catch (e) { fail(el, 'WebGL not supported by this browser'); return; }
+
+    var W = el.clientWidth, H = el.clientHeight || Math.round(W * 0.62);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(W, H);
+    el.appendChild(renderer.domElement);
+
+    var camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 5000);
+    var controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.09;
+    controls.enablePan = false;
+    controls.autoRotate = true;              // idle spin until touched
+    controls.autoRotateSpeed = 1.6;
+    controls.addEventListener('start', function () { controls.autoRotate = false; });
+
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x202028, 0.85));
+    var key = new THREE.DirectionalLight(0xffffff, 1.15); key.position.set(1, 1.4, 1.2);
+    var rim = new THREE.DirectionalLight(0xffd9a0, 0.55); rim.position.set(-1.3, 0.4, -1);
+    scene.add(key); scene.add(rim);
+
+    var label = document.createElement('span');
+    label.className = 'm3d-hint';
+    label.textContent = el.getAttribute('data-label') || 'drag to spin';
+    el.appendChild(label);
+
+    var loading = document.createElement('span');
+    loading.className = 'm3d-msg'; loading.textContent = 'loading 3D part\u2026';
+    el.appendChild(loading);
+
+    new THREE.STLLoader().load(url, function (geo) {
+      loading.remove();
+      geo.computeVertexNormals();
+      geo.center();
+      var mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
+        color: 0xf2a33c, roughness: 0.52, metalness: 0.18, flatShading: false
+      }));
+      scene.add(mesh);
+
+      // frame the part regardless of its modelling units
+      geo.computeBoundingSphere();
+      var r = geo.boundingSphere.radius;
+      var dist = r / Math.sin((camera.fov * Math.PI / 180) / 2) * 1.15;
+      camera.position.set(dist * 0.62, dist * 0.45, dist * 0.68);
+      camera.near = dist / 100; camera.far = dist * 12; camera.updateProjectionMatrix();
+      controls.target.set(0, 0, 0);
+      controls.minDistance = r * 1.2;
+      controls.maxDistance = dist * 3;
+      controls.update();
+      el.classList.add('m3d-ready');
+    }, null, function () {
+      fail(el, 'Part file not found (' + url + ')');
+    });
+
+    renderer.domElement.addEventListener('dblclick', function () {
+      controls.reset(); controls.autoRotate = true;
+    });
+
+    var running = true;
+    (function loop() {
+      if (!running) return;
+      requestAnimationFrame(loop);
+      controls.update();
+      renderer.render(scene, camera);
+    })();
+
+    window.addEventListener('resize', function () {
+      var w = el.clientWidth, h = el.clientHeight || Math.round(w * 0.62);
+      renderer.setSize(w, h);
+      camera.aspect = w / h; camera.updateProjectionMatrix();
+    });
+
+    // stop rendering entirely when off screen
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (e.isIntersecting && !running) { running = true; loop(); }
+          else if (!e.isIntersecting) { running = false; }
+        });
+      }, { rootMargin: '150px 0px' }).observe(el);
+    }
+  }
+
+  // only spin up WebGL when the part is near the viewport
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.isIntersecting) { io.unobserve(e.target); build(e.target); }
+      });
+    }, { rootMargin: '300px 0px' });
+    Array.prototype.forEach.call(mounts, function (el) { io.observe(el); });
+  } else {
+    Array.prototype.forEach.call(mounts, build);
+  }
+})();
+</script>
 
 <!-- ================================================================
      LOOPING VIDEOS

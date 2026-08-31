@@ -505,3 +505,39 @@ footer .foot-note { font-family: var(--mono); font-size: 12.5px; letter-spacing:
   .dgv-hint { display: none; }
   .diagram-cue { font-size: 11px; bottom: 8px; }
 }
+
+/* ---------- interactive 3D parts ---------- */
+
+.m3d {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  min-height: 260px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background:
+    radial-gradient(ellipse at 50% 35%, rgba(242,163,60,0.07), transparent 62%),
+    var(--surface);
+  overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y;
+}
+.m3d:active { cursor: grabbing; }
+.m3d canvas { display: block; width: 100% !important; height: 100% !important; }
+
+.m3d-hint {
+  position: absolute; left: 12px; bottom: 10px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em;
+  color: var(--muted); background: rgba(0,0,0,0.45);
+  padding: 4px 9px; border-radius: 999px;
+  opacity: 0; transition: opacity 0.25s ease; pointer-events: none;
+}
+.m3d.m3d-ready .m3d-hint { opacity: 1; }
+
+.m3d-msg {
+  position: absolute; inset: 0; display: flex;
+  align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 12.5px; color: var(--muted);
+  text-align: center; padding: 0 20px;
+}
+.m3d-failed { cursor: default; }
