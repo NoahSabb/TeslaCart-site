@@ -164,13 +164,13 @@
       </div>
       <div class="card">
         <h4>Forward / Reverse
-          <span class="status-inline st-wip">relays + firmware drafted, harness not yet traced</span></h4>
+          <span class="status-inline st-done">harness traced, relays wired, reverse in firmware</span></h4>
         <p>The cart's direction-select signals are intercepted with relays so
           direction can be set in firmware — same reversible T-harness
           pattern as the throttle.</p>
         <p>Firmware only ever switches direction at a verified standstill.
-          The relay topology and firmware are drafted; meter-testing the
-          harness is still to do — see the build log.</p>
+          Harness meter-tested, both relays wired, reverse in firmware — see
+          the build log.</p>
       </div>
     </div>
 
@@ -472,7 +472,7 @@
           firmware path — absolute-position steering on the left stick with
           expo-shaped sensitivity, gradual throttle on the right trigger,
           streamed at ~50&nbsp;Hz with a fail-safe that zeroes throttle if the
-          link drops. Reverse is not yet part of this — see Phase&nbsp;7.</p>
+          link drops. Reverse was added afterwards — see Phase&nbsp;7.</p>
         <!-- controller driving video: shows the real file when it exists in assets/,
              otherwise the labeled placeholder box below. Nothing to edit here —
              just drop the correctly-named file into assets/. -->
@@ -490,26 +490,58 @@
         </figure>
       </li>
 
-      <li class="phase is-wip">
+      <li class="phase is-done">
         <span class="phase-date">August 2026</span>
-        <h3>Phase 6 — Power distribution <span class="tag tag--wip">🟡 In progress</span></h3>
-        <p>Master disconnect switch, busbars, fuse holders, and the DC-DC
-          converters for the Jetson and the cameras are <strong>in hand</strong>,
-          and the full trunk — switch → main fuse → busbars → individually fused
-          branches — is documented pin-for-pin. Landing it on the cart is what's
-          left; on the bench the camera hubs still run from wall bricks rather
-          than the buck.</p>
+        <h3>Phase 6 — Power distribution <span class="tag tag--done">✅ Complete</span></h3>
+        <p>The whole trunk is <strong>wired on the cart</strong>: 48&nbsp;V pack →
+          master disconnect switch → main fuse → positive/negative busbars →
+          individually fused branches, with separate DC-DC converters so the
+          Jetson, the brake driver, and the camera hubs each get their own
+          isolated supply — the cameras now run off the cart, not wall bricks.
+          Every connection is documented pin-for-pin in the build repo's wiring
+          reference, and the negative busbar is the single ground star that
+          every subsystem lands on.</p>
+        <!-- power trunk video: shows the real file when it exists in assets/,
+             otherwise the labeled placeholder box below. Nothing to edit here —
+             just drop the correctly-named file into assets/. -->
+        <figure class="media">
+          <video muted loop playsinline preload="metadata" data-autoplay>
+            <source src="assets/power-distribution.mp4" type="video/mp4">
+          </video>
+          <figcaption>Master switch, fusing and busbars wired on the cart.</figcaption>
+          <div class="media-slot" aria-label="Power distribution video placeholder">
+            <span class="slot-kind">VIDEO</span>
+            <span class="slot-name">assets/power-distribution.mp4</span>
+            <p class="slot-desc">Walkthrough of the power trunk — master switch,
+              main fuse, busbars, and the fused branches.</p>
+          </div>
+        </figure>
       </li>
 
-      <li class="phase is-wip">
+      <li class="phase is-done">
         <span class="phase-date">August 2026</span>
-        <h3>Phase 7 — Forward / Reverse <span class="tag tag--wip">🟡 In progress</span></h3>
-        <p>Direction-select wires located on the cart, the two-relay topology
-          (real-vs-computer handoff, then forward/reverse select) is final, and
-          the firmware is drafted. Still to do — and it gates everything else
-          here: meter-test the 3-wire harness to identify forward/reverse/common
-          and signal polarity, then wire the relays. Uses existing relay channels
-          and Arduino pins — no new hardware.</p>
+        <h3>Phase 7 — Forward / Reverse <span class="tag tag--done">✅ Complete</span></h3>
+        <p>The 3-wire direction harness was <strong>meter-tested on the cart</strong>
+          — forward, reverse, and common identified, polarity confirmed — and
+          the two relays wired: one hands control from the real rocker switch
+          to the computer, the other selects direction. De-energized, the stock
+          rocker is in charge, same fail-safe pattern as the throttle. Reverse
+          is in firmware and only ever switches at a verified standstill. No
+          new hardware — existing relay channels and Arduino pins.</p>
+        <!-- reverse test video: shows the real file when it exists in assets/,
+             otherwise the labeled placeholder box below. Nothing to edit here —
+             just drop the correctly-named file into assets/. -->
+        <figure class="media">
+          <video muted loop playsinline preload="metadata" data-autoplay>
+            <source src="assets/reverse-test.mp4" type="video/mp4">
+          </video>
+          <figcaption>Direction switching from the controller — forward to reverse at a standstill.</figcaption>
+          <div class="media-slot" aria-label="Reverse test video placeholder">
+            <span class="slot-kind">VIDEO</span>
+            <span class="slot-name">assets/reverse-test.mp4</span>
+            <p class="slot-desc">Forward/reverse switching under computer control.</p>
+          </div>
+        </figure>
       </li>
 
       <li class="phase is-done">
@@ -574,8 +606,6 @@
     <ul class="next-list">
       <li>Brake telemetry — the Arduino reports the actual brake-pedal position back to the Jetson, so logged brake labels are real</li>
       <li>Move the Xbox controller to the Jetson over Bluetooth and write the combined drive-and-log script — control and logging in one loop</li>
-      <li>Meter-test the forward/reverse harness and fold reverse into the firmware</li>
-      <li>Land power distribution on the cart — master switch, busbars, fusing — and power the camera hubs from the buck instead of wall bricks</li>
       <li>Mount the camera rail (housings are printed) and retune exposure outdoors</li>
       <li>GPS bring-up: a plain outdoor fix first, then the one-time L5 enable</li>
       <li>Reach <strong>hardware complete</strong>: the cart drives on the controller with all six cameras mounted and full state feedback</li>

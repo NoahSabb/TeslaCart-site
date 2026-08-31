@@ -25,6 +25,8 @@ way your Mac is not — `Hero.MP4` will *not* work where `hero.mp4` is expected)
 | `steering-test.mp4` | video | Build log, Phase 2 | Wheels turning lock-to-lock / self-centering on stands. |
 | `brake-bench.mp4` | video | Build log, Phase 3 | Brake actuator bench test — variable-speed extend/retract over serial. |
 | `drive-test.mp4` | video | Build log, Phase 5 | Throttle or full controller-drive clip on the ground. |
+| `power-distribution.mp4` | video | Build log, Phase 6 | Walkthrough of the power trunk — master switch, main fuse, busbars, fused branches. |
+| `reverse-test.mp4` | video | Build log, Phase 7 | Forward/reverse switching under computer control, at a standstill. |
 | `camera-mount-cad.png` | image | Build log, Phase 8 | CAD render of the camera housing / rail mount. |
 
 You can add them one at a time in any order — each slot flips from placeholder
