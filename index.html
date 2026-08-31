@@ -8,8 +8,8 @@
 <meta property="og:title" content="TeslaCart — a self-driving golf cart">
 <meta property="og:description" content="Drive-by-wire retrofit + a fine-tuned vision-language-action model, built solo on a student budget.">
 <meta property="og:type" content="website">
-<!-- og:image points at the overview photo — becomes live once assets/cart-wide.jpg is added -->
-<meta property="og:image" content="assets/cart-wide.jpg">
+<!-- og:image must be a still image; every on-page subject that was filmed is a looping video -->
+<meta property="og:image" content="assets/social-card.jpg">
 <link rel="stylesheet" href="styles.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛳</text></svg>">
 </head>
@@ -26,19 +26,10 @@
       controls, a 360° camera rig, and an onboard neural network that learns
       to drive it.</p>
 
-    <!-- hero video: shows the real file when it exists in assets/,
-         otherwise the labeled placeholder box below. Nothing to edit here —
-         just drop the correctly-named file into assets/. -->
     <figure class="media">
       <video autoplay muted loop playsinline poster="assets/hero-poster.jpg">
         <source src="assets/hero.mp4" type="video/mp4">
       </video>
-      <div class="media-slot wide" aria-label="Hero video placeholder">
-        <span class="slot-kind">VIDEO</span>
-        <span class="slot-name">assets/hero.mp4</span>
-        <p class="slot-desc">Short muted loop of the cart driving — autonomous
-          footage when it exists, Xbox-controller driving until then.</p>
-      </div>
     </figure>
   </div>
 </header>
@@ -64,17 +55,11 @@
       reversible: unplug the intercept harness and unbolt a couple of
       brackets, and the cart is stock again.</p>
 
-    <!-- overview photo: shows the real file when it exists in assets/,
-         otherwise the labeled placeholder box below. Nothing to edit here —
-         just drop the correctly-named file into assets/. -->
     <figure class="media">
-      <img src="assets/cart-wide.jpg" alt="The TeslaCart — a 2015 Club Car Precedent with the camera rail and retrofit electronics visible">
-      <div class="media-slot" aria-label="Overview photo placeholder">
-        <span class="slot-kind">IMAGE</span>
-        <span class="slot-name">assets/cart-wide.jpg</span>
-        <p class="slot-desc">Wide shot of the finished cart — camera rail under
-          the roof, electronics visible.</p>
-      </div>
+      <video muted loop playsinline preload="metadata" data-autoplay
+             aria-label="The TeslaCart — a 2015 Club Car Precedent with the camera rail and retrofit electronics visible">
+        <source src="assets/cart-wide.mp4" type="video/mp4">
+      </video>
     </figure>
     <hr class="sec-rule">
   </div>
@@ -149,7 +134,7 @@
       </div>
       <div class="card">
         <h4>Braking
-          <span class="status-inline st-wip">bench-tested, not yet mounted</span></h4>
+          <span class="status-inline st-done">bench-tested and mounted on the cart</span></h4>
         <p>A self-locking 12&nbsp;V linear actuator (330&nbsp;lb) pulls the
           brake cable through a tension-only Y-bridle at the cable equalizer,
           driven by a BTS7960 H-bridge, with a slide potentiometer for
@@ -161,31 +146,64 @@
       </div>
       <div class="card">
         <h4>Forward / Reverse
-          <span class="status-inline st-wip">wires located, not yet traced</span></h4>
+          <span class="status-inline st-done">harness traced, relays wired, reverse in firmware</span></h4>
         <p>The cart's direction-select signals are intercepted with relays so
           direction can be set in firmware — same reversible T-harness
           pattern as the throttle.</p>
         <p>Firmware only ever switches direction at a verified standstill.
-          Harness tracing and relay wiring are still to do — see the build
-          log.</p>
+          Harness meter-tested, both relays wired, reverse in firmware — see
+          the build log.</p>
       </div>
     </div>
+
+    <figure class="media">
+      <video muted loop playsinline preload="metadata" data-autoplay
+             aria-label="Timelapse of the drive-by-wire boards being soldered, from bare perfboard to finished assembly">
+        <source src="assets/soldering.mp4" type="video/mp4">
+      </video>
+      <figcaption>Building the boards — three soldering sessions back to back, from
+        bare perfboard to the finished drive-by-wire assemblies.</figcaption>
+    </figure>
+
+    <h3>The steering assembly, in 3D</h3>
+    <p>The full steering assembly — motor mount, bracketry and column hardware
+      together. Drag to spin it, scroll to zoom; this is the real CAD, loaded
+      straight from the STL in the build repo.</p>
+    <figure class="media">
+      <div class="m3d" data-stl="assets/steering-full.stl" data-rotate="-90,0,0"
+           data-label="Full steering assembly — drag to spin"></div>
+      <figcaption>Full steering assembly — shown from the source STL.</figcaption>
+    </figure>
 
     <h3>Cameras — 360° vision</h3>
     <ul>
       <li><strong>6× Innomaker U20CAM-1080P</strong> USB cameras — 1080p @
         30&nbsp;fps, MJPEG, native UVC, ~130° diagonal field of view each.</li>
       <li><strong>Surround layout:</strong> front-center, two front corners
-        (≈±60°), two rear corners (≈±120°), and rear-center — mounted on PVC
-        rails under the roof lip with cabling routed inside the rail.</li>
-      <li>MJPEG compression is what makes six simultaneous USB streams
-        feasible on the available bandwidth. The driving model consumes up to
-        three streams per timestep, selected by driving direction — front
-        cameras going forward, rear cameras in reverse.</li>
+        (≈±60°), two rear corners (≈±120°), and rear-center — to be mounted on
+        PVC rails under the roof lip with cabling routed inside the rail.
+        Housings are printed; the rail is not on the cart yet.</li>
+      <li><strong>All six stream at once — verified.</strong> MJPEG compression
+        is necessary but not sufficient: these cameras over-declare their USB
+        bandwidth, so stock Linux only lets two stream per controller. A
+        patched <code>uvcvideo</code> kernel driver that clamps the reservation,
+        plus splitting the hubs across two USB root ports, gets all six running
+        at 1080p30 (20–27&nbsp;fps each, zero dropped frames). The driving
+        model consumes up to three streams per timestep, selected by driving
+        direction — front cameras going forward, rear cameras in reverse.</li>
       <li>Cameras are powered from the cart through powered USB hubs (fed by
         a wide-input DC-DC buck converter off the battery busbars), so camera
         load and heat stay off the Jetson — its port carries data only.</li>
     </ul>
+
+    <h3>The camera setup, in 3D</h3>
+    <p>The full camera setup — housings and rail hardware together. Same deal —
+      drag to spin, scroll to zoom.</p>
+    <figure class="media">
+      <div class="m3d" data-stl="assets/camera-full.stl" data-rotate="-90,0,0"
+           data-label="Full camera setup — drag to spin"></div>
+      <figcaption>Full camera setup — shown from the source STL.</figcaption>
+    </figure>
 
     <h3>Power distribution</h3>
     <p>48&nbsp;V pack → master battery-disconnect switch → main fuse →
@@ -194,31 +212,23 @@
       Jetson from the brake actuator, so motor inrush can't brown out the
       computer mid-drive.</p>
 
-    <!-- wiring / architecture diagram: shows the real file when it exists in assets/,
-         otherwise the labeled placeholder box below. Nothing to edit here —
-         just drop the correctly-named file into assets/. -->
+    <!-- The live draw.io diagram: the real .drawio file rendered by draw.io's own
+         viewer, so it is identical to the editor and stays vector at any zoom.
+         Loads only when scrolled into view. -->
     <figure class="media">
-      <img src="assets/wiring-diagram.png" alt="Full-system wiring diagram: power distribution and Arduino pin assignments">
-      <figcaption>Full-system schematic — power distribution and Arduino pin map.</figcaption>
-      <div class="media-slot" aria-label="Wiring diagram placeholder">
-        <span class="slot-kind">DIAGRAM</span>
-        <span class="slot-name">assets/wiring-diagram.png</span>
-        <p class="slot-desc">Export of the draw.io system schematic — power
-          distribution plus the Arduino pin map for every subsystem.</p>
+      <div class="dio" data-src="assets/wiring-diagram.drawio">
+        <div class="dio-status">loading the wiring diagram&hellip;</div>
       </div>
+      <figcaption>Full-system wiring diagram — every component drawn to scale on
+        the cart and wired as built. Scroll to zoom, drag to pan; use the
+        fullscreen button for a closer look.</figcaption>
     </figure>
 
-    <!-- electronics close-up: shows the real file when it exists in assets/,
-         otherwise the labeled placeholder box below. Nothing to edit here —
-         just drop the correctly-named file into assets/. -->
     <figure class="media">
-      <img src="assets/electronics-closeup.jpg" alt="Close-up of the retrofit electronics: Arduino Mega, relay board, motor drivers, and busbars">
-      <div class="media-slot" aria-label="Electronics close-up placeholder">
-        <span class="slot-kind">IMAGE</span>
-        <span class="slot-name">assets/electronics-closeup.jpg</span>
-        <p class="slot-desc">Close-up of the Arduino, relays, motor drivers, and
-          busbars.</p>
-      </div>
+      <video muted loop playsinline preload="metadata" data-autoplay
+             aria-label="Close-up of the retrofit electronics: Arduino Mega, relay board, motor drivers, and busbars">
+        <source src="assets/electronics-closeup.mp4" type="video/mp4">
+      </video>
     </figure>
     <hr class="sec-rule">
   </div>
@@ -303,9 +313,18 @@
         controller</strong>. The controller inputs <em>are</em> the training
         labels — the model learns to reproduce the commands the human issued.</li>
       <li>Each logged record: <code>timestamp, 6 camera frames, commanded
-        steering / throttle / direction</code> at ~30&nbsp;Hz, stored in the
-        LeRobot dataset format. Brake logs the <em>actual</em> potentiometer
-        position — continuous feedback, not just the command.</li>
+        steering / throttle / direction</code> at 10–15&nbsp;Hz, converted
+        offline to the LeRobot dataset format. Brake logs the <em>actual</em>
+        potentiometer position — continuous feedback, not just the command.</li>
+      <li><strong>Every episode carries a language instruction</strong>, because
+        the model is language-conditioned: a closed vocabulary — <em>follow the
+        road</em>, <em>turn left at the intersection</em>, <em>turn right at the
+        intersection</em> — chosen on the controller before each 15–30&nbsp;s
+        episode, so the label is captured at record time, not reconstructed
+        later. At drive time the same strings come from a deterministic routing
+        layer (GPS snapped to an OpenStreetMap road graph); the model never sees
+        a map, and GPS stays out of its inputs so it can't memorize
+        intersections by coordinate.</li>
       <li>Target: roughly <strong>5–10 hours of clean driving</strong> (~20–30
         short sessions), including deliberate <strong>recovery
         episodes</strong> — drift off-center, then correct — to teach the
@@ -317,18 +336,12 @@
         logged now, added later.</li>
     </ul>
 
-    <!-- object-detection screenshot: shows the real file when it exists in assets/,
-         otherwise the labeled placeholder box below. Nothing to edit here —
-         just drop the correctly-named file into assets/. -->
     <figure class="media">
-      <img src="assets/detectnet.jpg" alt="Live object detection on the Jetson with real-time bounding boxes">
+      <video muted loop playsinline preload="metadata" data-autoplay
+             aria-label="Live object detection on the Jetson with real-time bounding boxes">
+        <source src="assets/detectnet.mp4" type="video/mp4">
+      </video>
       <figcaption>SSD-MobileNet running under TensorRT on the Jetson — the base of the safety-override detector.</figcaption>
-      <div class="media-slot" aria-label="Object detection screenshot placeholder">
-        <span class="slot-kind">SCREENSHOT</span>
-        <span class="slot-name">assets/detectnet.jpg</span>
-        <p class="slot-desc">The Jetson running live object detection with
-          real-time bounding boxes.</p>
-      </div>
     </figure>
     <hr class="sec-rule">
   </div>
@@ -355,6 +368,13 @@
           then <strong>road-tested on the cart under load</strong> — from a
           25% crawl to full throttle. Includes a serial watchdog that zeroes
           throttle on signal loss.</p>
+        <figure class="media">
+          <video muted loop playsinline preload="metadata" data-autoplay
+                 aria-label="The throttle intercept circuit in its test enclosure">
+            <source src="assets/throttle-box.mp4" type="video/mp4">
+          </video>
+          <figcaption>The throttle intercept in its test box — Arduino Mega, relay board and the digital-pot circuit that impersonates the pedal.</figcaption>
+        </figure>
       </li>
 
       <li class="phase is-done">
@@ -364,47 +384,26 @@
           Lock-to-lock calibrated (usable range ±7000 steps). Driven live from
           an Xbox controller with self-centering, absolute-position
           steering.</p>
-        <!-- steering test video: shows the real file when it exists in assets/,
-             otherwise the labeled placeholder box below. Nothing to edit here —
-             just drop the correctly-named file into assets/. -->
         <figure class="media">
-          <video controls muted playsinline preload="metadata">
+          <video muted loop playsinline preload="metadata" data-autoplay>
             <source src="assets/steering-test.mp4" type="video/mp4">
           </video>
-          <figcaption>Lock-to-lock steering and self-centering, cart on stands.</figcaption>
-          <div class="media-slot" aria-label="Steering test video placeholder">
-            <span class="slot-kind">VIDEO</span>
-            <span class="slot-name">assets/steering-test.mp4</span>
-            <p class="slot-desc">Steering test — wheels turning lock-to-lock and
-              self-centering on stands.</p>
-          </div>
+          <figcaption>The steering circuit — HBS86H driver, controller and motor cable — laid out before it went on the cart.</figcaption>
         </figure>
       </li>
 
       <li class="phase is-done">
         <span class="phase-date">July 26–30, 2026</span>
-        <h3>Phase 3 — Brake subsystem <span class="tag tag--done">✅ Bench-tested</span> <span class="tag tag--wip">🟡 not yet mounted</span></h3>
+        <h3>Phase 3 — Brake subsystem <span class="tag tag--done">✅ Complete</span></h3>
         <p>Linear-actuator brake with a tension-only cable bridle and
           continuous position feedback. <strong>Full chain bench-tested
           successfully</strong> — extend/retract with variable speed over serial;
-          the self-locking actuator holds position with no holding current.
-          Not yet mounted to the cart or integrated into the control loop —
-          manual during the RC phase by design.</p>
-        <!-- brake bench test video: shows the real file when it exists in assets/,
-             otherwise the labeled placeholder box below. Nothing to edit here —
-             just drop the correctly-named file into assets/. -->
-        <figure class="media">
-          <video controls muted playsinline preload="metadata">
-            <source src="assets/brake-bench.mp4" type="video/mp4">
-          </video>
-          <figcaption>Brake actuator bench test — variable-speed control over serial.</figcaption>
-          <div class="media-slot" aria-label="Brake bench test video placeholder">
-            <span class="slot-kind">VIDEO</span>
-            <span class="slot-name">assets/brake-bench.mp4</span>
-            <p class="slot-desc">Brake actuator bench test — variable-speed
-              extend/retract under serial control.</p>
-          </div>
-        </figure>
+          the self-locking actuator holds position with no holding current —
+          and now <strong>mounted on the cart</strong>, pulling the brake cable
+          through the Y-bridle at the equalizer. Because the linkage is
+          tension-only, the pedal still overrides it and a snapped cable
+          releases the brakes. Reporting the fader position back to the Jetson
+          (brake telemetry) is the next step — see the roadmap.</p>
       </li>
 
       <li class="phase is-done">
@@ -413,7 +412,9 @@
         <p>Jetson Orin Nano set up on JetPack 6.2.1, root filesystem migrated
           from microSD to the NVMe SSD, and live object detection running via
           TensorRT (SSD-MobileNet with real-time bounding boxes) — proving the
-          capture → neural net → render loop the driving model will use.</p>
+          capture → neural net → render loop the driving model will use. Since
+          then it runs headless: Tailscale + key-based SSH, no monitor or
+          keyboard needed.</p>
       </li>
 
       <li class="phase is-done">
@@ -423,72 +424,108 @@
           firmware path — absolute-position steering on the left stick with
           expo-shaped sensitivity, gradual throttle on the right trigger,
           streamed at ~50&nbsp;Hz with a fail-safe that zeroes throttle if the
-          link drops. Reverse is not yet part of this — see Phase&nbsp;7.</p>
-        <!-- controller driving video: shows the real file when it exists in assets/,
-             otherwise the labeled placeholder box below. Nothing to edit here —
-             just drop the correctly-named file into assets/. -->
+          link drops. Reverse was added afterwards — see Phase&nbsp;7.</p>
         <figure class="media">
-          <video controls muted playsinline preload="metadata">
+          <video muted loop playsinline preload="metadata" data-autoplay>
             <source src="assets/drive-test.mp4" type="video/mp4">
           </video>
           <figcaption>Controller-driven test on the ground.</figcaption>
-          <div class="media-slot" aria-label="Controller drive video placeholder">
-            <span class="slot-kind">VIDEO</span>
-            <span class="slot-name">assets/drive-test.mp4</span>
-            <p class="slot-desc">Full controller-drive clip on the ground —
-              throttle + steering from the Xbox controller.</p>
-          </div>
         </figure>
       </li>
 
-      <li class="phase is-wip">
+      <li class="phase is-done">
         <span class="phase-date">August 2026</span>
-        <h3>Phase 6 — Power distribution <span class="tag tag--wip">🟡 In progress</span></h3>
-        <p>Master disconnect switch and busbars <strong>ordered</strong>; main
-          + branch fusing planned. Wiring the trunk — switch → fuse → busbars
-          → branches — is pending parts arrival.</p>
+        <h3>Phase 6 — Power distribution <span class="tag tag--done">✅ Complete</span></h3>
+        <p>The whole trunk is <strong>wired on the cart</strong>: 48&nbsp;V pack →
+          master disconnect switch → main fuse → positive/negative busbars →
+          individually fused branches, with separate DC-DC converters so the
+          Jetson, the brake driver, and the camera hubs each get their own
+          isolated supply — the cameras now run off the cart, not wall bricks.
+          Every connection is documented pin-for-pin in the build repo's wiring
+          reference, and the negative busbar is the single ground star that
+          every subsystem lands on.</p>
       </li>
 
-      <li class="phase is-wip">
+      <li class="phase is-done">
         <span class="phase-date">August 2026</span>
-        <h3>Phase 7 — Forward / Reverse <span class="tag tag--wip">🟡 In progress</span></h3>
-        <p>Direction-select wires located on the cart. Still to do: meter-test
-          the 3-wire harness (identify forward/reverse/common and signal
-          polarity), wire the two relays, and add reverse to firmware. Uses
-          existing relay channels and Arduino pins — no new hardware.</p>
+        <h3>Phase 7 — Forward / Reverse <span class="tag tag--done">✅ Complete</span></h3>
+        <p>The 3-wire direction harness was <strong>meter-tested on the cart</strong>
+          — forward, reverse, and common identified, polarity confirmed — and
+          the two relays wired: one hands control from the real rocker switch
+          to the computer, the other selects direction. De-energized, the stock
+          rocker is in charge, same fail-safe pattern as the throttle. Reverse
+          is in firmware and only ever switches at a verified standstill. No
+          new hardware — existing relay channels and Arduino pins.</p>
       </li>
 
-      <li class="phase is-wip">
-        <span class="phase-date">August 2026</span>
-        <h3>Phase 8 — Camera subsystem <span class="tag tag--wip">🟡 In progress</span></h3>
-        <p>Six-camera 360° rig <strong>decided and ordered</strong> — cameras,
-          powered hubs, buck converter. Mounts (printed housings on PVC rails)
-          are designed but not yet built, waiting on parts to measure and CAD.
-          <strong>Six-simultaneous-stream validation has not yet been run</strong>
-          — that's the gating test before mounts and cable lengths are
-          finalized.</p>
-        <!-- camera mount CAD render: shows the real file when it exists in assets/,
-             otherwise the labeled placeholder box below. Nothing to edit here —
-             just drop the correctly-named file into assets/. -->
+      <li class="phase is-done">
+        <span class="phase-date">August 23–30, 2026</span>
+        <h3>Phase 8 — Camera subsystem <span class="tag tag--done">✅ Six streams validated</span> <span class="tag tag--wip">🟡 not yet mounted</span></h3>
+        <p>The gating test <strong>passed: all six cameras stream 1080p30 MJPEG
+          concurrently on the Jetson</strong> — 20–27&nbsp;fps each, zero failed
+          grabs, zero corrupt frames. Getting there took real driver work. Out
+          of the box only <em>two</em> cameras would stream: they declare far
+          more USB bandwidth than MJPEG actually needs, and the kernel reserves
+          what they ask for. Root-caused it, then built and installed a
+          <strong>patched <code>uvcvideo</code> kernel module</strong> that
+          clamps the reservation, and split the two hubs across separate USB
+          root ports for a second bandwidth budget. Cameras are identified by
+          stable port paths (never <code>/dev/videoN</code>, which shuffles on
+          every reboot), and exposure / line-frequency settings are applied
+          automatically at boot by a systemd service — verified across a real
+          reboot, no manual step. Housings are printed; mounting the rail on the
+          cart and retuning exposure outdoors are what's left.</p>
         <figure class="media">
-          <img src="assets/camera-mount-cad.png" alt="CAD render of the camera housing and rail mount">
-          <figcaption>Camera housing / rail mount, designed in Fusion 360.</figcaption>
-          <div class="media-slot" aria-label="Camera mount CAD placeholder">
-            <span class="slot-kind">IMAGE</span>
-            <span class="slot-name">assets/camera-mount-cad.png</span>
-            <p class="slot-desc">CAD render of the camera housing / rail
-              mount.</p>
-          </div>
+          <video muted loop playsinline preload="metadata" data-autoplay
+                 aria-label="Bench setup for the first six-camera test on the Jetson">
+            <source src="assets/camera-bringup.mp4" type="video/mp4">
+          </video>
+          <figcaption>Bench setup for the first six-camera run — all six U20CAM modules staged next to the Jetson.</figcaption>
         </figure>
+      </li>
+
+      <li class="phase is-wip">
+        <span class="phase-date">August 30, 2026</span>
+        <h3>Phase 9 — GPS &amp; routing layer <span class="tag tag--wip">🟡 In progress</span></h3>
+        <p>Receiver and antenna <strong>ordered</strong>: a u-blox NEO-F10N
+          (dual-band L1/L5 with multipath mitigation, ~1.5&nbsp;m accuracy) and a
+          multi-band active antenna — deliberately the more expensive half,
+          since the antenna decides how many satellites are actually heard. Its
+          job is decided and narrow: stamp training data with position and
+          speed, and later feed a <strong>deterministic routing layer</strong>
+          that snaps to an OpenStreetMap road graph and publishes a single
+          instruction string to the driving model. GPS ground speed also covers
+          the "only steer while rolling" interlock. Integration not started;
+          first step is a plain outdoor fix before enabling the L5 band.</p>
+      </li>
+
+      <li class="phase is-wip">
+        <span class="phase-date">August 2026 →</span>
+        <h3>Phase 10 — Autonomy (VLA training) <span class="tag tag--wip">🟡 In progress</span></h3>
+        <p>Underway. The data-collection design is locked —
+          language-conditioned episodes with a frozen instruction vocabulary,
+          labeled at record time from the controller, 100+ episodes per maneuver
+          across many intersections — and the model side is being sized before
+          any driving data exists: the pretrained SmolVLA checkpoint is set up
+          on the Jetson with LeRobot, and an inference benchmark sweeps camera
+          views, image resolution, and denoise steps to measure exactly what six
+          views cost in latency and memory. Next: brake telemetry and the
+          combined drive-and-log script, then collection starts once the cameras
+          are mounted. Then fine-tune, deploy, and layer in the safety
+          override.</p>
       </li>
 
       <li class="phase">
-        <span class="phase-date">Upcoming</span>
-        <h3>Phase 9 — Autonomy (VLA training) <span class="tag tag--plan">⬜ Planned</span></h3>
-        <p>Not started. Depends on hardware-complete — drives on the
-          controller with all six cameras streaming reliably — so that data
-          collection can begin. Plan: fine-tune a pretrained VLA on
-          RC-collected driving data, then layer in the safety override.</p>
+        <span class="phase-date">Later</span>
+        <h3>Phase 11 — LiDAR <span class="tag tag--plan">⬜ Planned</span></h3>
+        <p>Not started, deliberately deferred. An independent, depth-sensing
+          obstacle-detection layer alongside the cameras — a second opinion
+          that doesn't share the cameras' failure modes (glare, low light,
+          a lens cap of dust). It would slot into the existing override layer
+          above the driving policy, not into the model itself, so the
+          autonomy stack ships and proves out on cameras first. Sensor
+          selection, mounting, and the cost trade against a plain radar
+          are all open.</p>
       </li>
     </ol>
     <hr class="sec-rule">
@@ -503,11 +540,12 @@
     <p class="sec-label">05 · Roadmap</p>
     <h2>What's next</h2>
     <ul class="next-list">
-      <li>Finish forward/reverse wiring and fold it into the firmware</li>
-      <li>Complete power distribution — master switch, busbars, fusing — and final electronics integration</li>
-      <li>Validate all six cameras streaming simultaneously, then build and mount the camera rail</li>
-      <li>Reach <strong>hardware complete</strong>: the cart drives on the controller with all six cameras streaming and full state feedback</li>
-      <li>Begin data collection — log synchronized camera + command data while driving manually</li>
+      <li>Brake telemetry — the Arduino reports the actual brake-pedal position back to the Jetson, so logged brake labels are real</li>
+      <li>Move the Xbox controller to the Jetson over Bluetooth and write the combined drive-and-log script — control and logging in one loop</li>
+      <li>Mount the camera rail (housings are printed) and retune exposure outdoors</li>
+      <li>GPS bring-up: a plain outdoor fix first, then the one-time L5 enable</li>
+      <li>Reach <strong>hardware complete</strong>: the cart drives on the controller with all six cameras mounted and full state feedback</li>
+      <li>Begin data collection — labeled, language-conditioned episodes of synchronized camera + command data while driving manually</li>
       <li>Fine-tune the VLA, deploy it on the Jetson, and bring up the safety-override layer — one layer at a time, safety first</li>
       <li>Longer term: add LiDAR — an independent, depth-sensing obstacle-detection layer alongside the cameras</li>
       <li>Keep a human in the seat throughout — Level-2, always overridable</li>
@@ -530,6 +568,258 @@
   </div>
 </footer>
 
+<script>
+// Shared "is this near the viewport" helper. Deliberately not IntersectionObserver:
+// a plain rect test behaves identically everywhere and is testable headlessly.
+window.__near = function (el, pad) {
+  var r = el.getBoundingClientRect(), h = window.innerHeight || 800;
+  pad = pad || 250;
+  return r.bottom > -pad && r.top < h + pad;
+};
+window.__onView = function (fn) {
+  var run = function () { fn(); };
+  window.addEventListener('scroll', run, { passive: true });
+  window.addEventListener('resize', run);
+  run();
+  setTimeout(run, 60);
+};
+</script>
+
+<!-- ================================================================
+     INTERACTIVE 3D PARTS
+     Each .m3d div loads a real STL from the build repo and renders it live:
+     drag to spin, scroll to zoom, double-click to reset. It idles on a slow
+     auto-spin until you touch it. WebGL is only started once the part scrolls
+     into view, and three.js is vendored locally (assets/vendor) so the page
+     makes no external requests.
+     ================================================================ -->
+<script src="assets/vendor/three.min.js"></script>
+<script src="assets/vendor/OrbitControls.js"></script>
+<script src="assets/vendor/STLLoader.js"></script>
+<script>
+(function () {
+  var mounts = document.querySelectorAll('.m3d');
+  if (!mounts.length) return;
+
+  function fail(el, msg) {
+    el.classList.add('m3d-failed');
+    el.innerHTML = '<span class="m3d-msg">' + msg + '</span>';
+  }
+  if (!window.THREE || !THREE.WebGLRenderer) {
+    Array.prototype.forEach.call(mounts, function (el) { fail(el, '3D viewer unavailable'); });
+    return;
+  }
+
+  function build(el) {
+    var url = el.getAttribute('data-stl');
+    var scene = new THREE.Scene();
+    var renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    } catch (e) { fail(el, 'WebGL not supported by this browser'); return; }
+
+    var W = el.clientWidth, H = el.clientHeight || Math.round(W * 0.62);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;   // stops the highlights blowing out
+    renderer.toneMappingExposure = 0.95;
+    renderer.setSize(W, H);
+    el.appendChild(renderer.domElement);
+
+    var camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 5000);
+    var controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.09;
+    controls.enablePan = false;
+    controls.autoRotate = true;              // idle spin until touched
+    controls.autoRotateSpeed = 1.6;
+    controls.addEventListener('start', function () { controls.autoRotate = false; });
+
+    scene.add(new THREE.HemisphereLight(0xdfe6f2, 0x14161c, 0.55));
+    var key = new THREE.DirectionalLight(0xffffff, 0.85); key.position.set(1, 1.4, 1.2);
+    var rim = new THREE.DirectionalLight(0xffd9a0, 0.35); rim.position.set(-1.3, 0.4, -1);
+    scene.add(key); scene.add(rim);
+
+    var label = document.createElement('span');
+    label.className = 'm3d-hint';
+    label.textContent = el.getAttribute('data-label') || 'drag to spin';
+    el.appendChild(label);
+
+    var loading = document.createElement('span');
+    loading.className = 'm3d-msg'; loading.textContent = 'loading 3D part\u2026';
+    el.appendChild(loading);
+
+    new THREE.STLLoader().load(url, function (geo) {
+      loading.remove();
+      // CAD exports are Z-up; three.js is Y-up. Default -90 about X stands the
+      // part upright. Override per model with data-rotate="rx,ry,rz" (degrees).
+      var rot = (el.getAttribute('data-rotate') || '-90,0,0').split(',').map(Number);
+      if (rot[0]) geo.rotateX(rot[0] * Math.PI / 180);
+      if (rot[1]) geo.rotateY(rot[1] * Math.PI / 180);
+      if (rot[2]) geo.rotateZ(rot[2] * Math.PI / 180);
+      geo.computeVertexNormals();
+      geo.center();
+      var mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
+        color: 0xd98f33, roughness: 0.62, metalness: 0.06, flatShading: false
+      }));
+      scene.add(mesh);
+
+      // frame the part regardless of its modelling units
+      geo.computeBoundingSphere();
+      var r = geo.boundingSphere.radius;
+      var dist = r / Math.sin((camera.fov * Math.PI / 180) / 2) * 1.15;
+      camera.position.set(dist * 0.62, dist * 0.45, dist * 0.68);
+      camera.near = dist / 100; camera.far = dist * 12; camera.updateProjectionMatrix();
+      controls.target.set(0, 0, 0);
+      controls.minDistance = r * 1.2;
+      controls.maxDistance = dist * 3;
+      controls.update();
+      el.classList.add('m3d-ready');
+    }, null, function () {
+      fail(el, 'Part file not found (' + url + ')');
+    });
+
+    renderer.domElement.addEventListener('dblclick', function () {
+      controls.reset(); controls.autoRotate = true;
+    });
+
+    // render only while on screen, so an off-screen part costs nothing
+    var tick = 0;
+    (function loop() {
+      requestAnimationFrame(loop);
+      if ((tick++ % 15) === 0 && !window.__near(el, 150)) return;
+      controls.update();
+      renderer.render(scene, camera);
+    })();
+
+    window.addEventListener('resize', function () {
+      var w = el.clientWidth, h = el.clientHeight || Math.round(w * 0.62);
+      renderer.setSize(w, h);
+      camera.aspect = w / h; camera.updateProjectionMatrix();
+    });
+
+  }
+
+  // build each part once it comes near the viewport
+  var pending = Array.prototype.slice.call(mounts);
+  window.__onView(function () {
+    pending = pending.filter(function (el) {
+      if (!window.__near(el, 300)) return true;
+      build(el);
+      return false;
+    });
+  });
+})();
+</script>
+
+<!-- ================================================================
+     LIVE DRAW.IO DIAGRAM
+     Renders the actual .drawio file with draw.io's own viewer, so what you see
+     is exactly the editor's output - vector, zoomable, nothing exported by hand.
+     The 4 MB viewer and the 4 MB diagram are fetched only when the section is
+     scrolled into view.
+     ================================================================ -->
+<script>
+(function () {
+  var mounts = Array.prototype.slice.call(document.querySelectorAll('.dio'));
+  if (!mounts.length) return;
+  var libState = 0;   // 0 = not asked, 1 = loading, 2 = ready, 3 = failed
+  var waiting = [];
+
+  function withLib(cb) {
+    if (libState === 2) return cb();
+    waiting.push(cb);
+    if (libState) return;
+    libState = 1;
+    var sc = document.createElement('script');
+    sc.src = 'assets/vendor/drawio-viewer.min.js';
+    sc.onload = function () {
+      libState = 2;
+      waiting.splice(0).forEach(function (f) { f(); });
+    };
+    sc.onerror = function () {
+      libState = 3;
+      mounts.forEach(function (el) { status(el, 'Diagram viewer failed to load.'); });
+    };
+    document.head.appendChild(sc);
+  }
+  function status(el, msg) {
+    var s = el.querySelector('.dio-status');
+    if (s) s.textContent = msg;
+  }
+
+  function mount(el) {
+    var url = el.getAttribute('data-src');
+    fetch(url).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text();
+    }).then(function (xml) {
+      withLib(function () {
+        try {
+          // The diagram's colours are light-dark(light,dark) pairs and the wire
+          // colours live on the DARK side - the light side is mostly #FFFFFF,
+          // which collapses every wire to the same colour. Pin the viewer to the
+          // dark palette so it matches draw.io exactly for every visitor,
+          // whatever their OS theme is set to.
+          mxUtils.lightDarkColorSupported = false;
+          mxUtils.preferDarkColor = true;
+          if (window.Editor) { Editor.darkMode = true; }
+          el.setAttribute('data-mxgraph', JSON.stringify({
+            xml: xml,
+            toolbar: 'zoom layers lightbox',
+            toolbarPosition: 'top',
+            resize: true, fit: true, center: true,
+            zoomEnabled: true, nav: true, lightbox: true,
+            // the diagram's colours are light-dark() pairs; the dark side is the
+            // one with the real wire colours, which is how it looks in draw.io
+            'dark-mode': true,
+            highlight: '#f2a33c'
+          }));
+          GraphViewer.createViewerForElement(el);
+          el.classList.add('dio-ready');
+          var s = el.querySelector('.dio-status');
+          if (s) s.remove();
+        } catch (e) {
+          status(el, 'Could not render the diagram (' + e.message + ').');
+        }
+      });
+    }).catch(function (e) {
+      status(el, 'Diagram not available (' + e.message + ').');
+    });
+  }
+
+  var pending = mounts.slice();
+  window.__onView(function () {
+    pending = pending.filter(function (el) {
+      if (!window.__near(el, 400)) return true;
+      mount(el);
+      return false;
+    });
+  });
+})();
+</script>
+
+<!-- ================================================================
+     LOOPING VIDEOS
+     Every filmed subject on this page is a muted, looping video - there are no
+     play buttons anywhere. They start when scrolled into view and pause when
+     they leave, so six loops don't all stream at once.
+     ================================================================ -->
+<script>
+(function () {
+  var vids = Array.prototype.slice.call(document.querySelectorAll('video[data-autoplay]'));
+  if (!vids.length) return;
+  function play(v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+
+  window.__onView(function () {
+    vids.forEach(function (v) {
+      if (window.__near(v, 200)) { if (v.paused) play(v); }
+      else if (!v.paused) { v.pause(); }
+    });
+  });
+})();
+</script>
+
 <!-- ================================================================
      MEDIA AUTO-SWAP
      Every figure.media above points at a file in assets/. If the file is
@@ -539,23 +829,24 @@
      into assets/ — no HTML edits, ever.
      ================================================================ -->
 <script>
+// If a media file ever fails to load, hide that figure outright rather than
+// leaving a broken frame on the page.
 (function () {
   var figs = document.querySelectorAll('figure.media');
   Array.prototype.forEach.call(figs, function (fig) {
-    if (!fig.querySelector('.media-slot')) return;          // no fallback to show
-    var missing = function () { fig.classList.add('is-missing'); };
+    var gone = function () { fig.classList.add('is-missing'); };
 
     Array.prototype.forEach.call(fig.querySelectorAll('img'), function (img) {
-      img.addEventListener('error', missing);
-      if (img.complete && img.naturalWidth === 0) missing(); // already failed
+      img.addEventListener('error', gone);
+      if (img.complete && img.naturalWidth === 0) gone();
     });
 
     Array.prototype.forEach.call(fig.querySelectorAll('video'), function (vid) {
       Array.prototype.forEach.call(vid.querySelectorAll('source'), function (s) {
-        s.addEventListener('error', missing);                // <source> 404s here
+        s.addEventListener('error', gone);
       });
-      vid.addEventListener('error', missing);
-      if (vid.networkState === 3) missing();                 // NETWORK_NO_SOURCE
+      vid.addEventListener('error', gone);
+      if (vid.networkState === 3) gone();
     });
   });
 })();
