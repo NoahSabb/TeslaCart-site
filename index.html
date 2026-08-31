@@ -834,6 +834,14 @@ window.__onView = function (fn) {
     }).then(function (xml) {
       withLib(function () {
         try {
+          // The diagram's colours are light-dark(light,dark) pairs and the wire
+          // colours live on the DARK side - the light side is mostly #FFFFFF,
+          // which collapses every wire to the same colour. Pin the viewer to the
+          // dark palette so it matches draw.io exactly for every visitor,
+          // whatever their OS theme is set to.
+          mxUtils.lightDarkColorSupported = false;
+          mxUtils.preferDarkColor = true;
+          if (window.Editor) { Editor.darkMode = true; }
           el.setAttribute('data-mxgraph', JSON.stringify({
             xml: xml,
             toolbar: 'zoom layers lightbox',
