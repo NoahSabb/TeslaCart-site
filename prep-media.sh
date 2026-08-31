@@ -26,7 +26,7 @@ drive-test:mp4 camera-mount-cad:png"
 
 MAXW=2000        # max image width in px
 VIDH=1080        # max video height in px
-CRF=24           # video quality: lower = better + bigger
+CRF="${CRF:-24}"   # video quality: lower = better + bigger. Override: CRF=28 ./prep-media.sh ...
 
 die() { printf '\033[31merror:\033[0m %s\n' "$*" >&2; exit 1; }
 
