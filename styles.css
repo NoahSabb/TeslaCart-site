@@ -453,6 +453,9 @@ footer .foot-note { font-family: var(--mono); font-size: 12.5px; letter-spacing:
 .diagram-open:focus-visible .diagram-cue { opacity: 1; }
 .diagram-open:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
+/* the hidden attribute must beat display:flex, or the overlay paints over
+   the whole page on load */
+.dgv[hidden] { display: none !important; }
 .dgv {
   position: fixed; inset: 0; z-index: 100;
   background: rgba(8, 9, 12, 0.97);
