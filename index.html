@@ -179,7 +179,7 @@
       together. Drag to spin it, scroll to zoom; this is the real CAD, loaded
       straight from the STL in the build repo.</p>
     <figure class="media">
-      <div class="m3d" data-stl="assets/steering-full.stl"
+      <div class="m3d" data-stl="assets/steering-full.stl" data-rotate="-90,0,0"
            data-label="Full steering assembly — drag to spin"></div>
       <figcaption>Full steering assembly — shown from the source STL.</figcaption>
     </figure>
@@ -204,7 +204,7 @@
     <p>The full camera setup — housings and rail hardware together. Same deal —
       drag to spin, scroll to zoom.</p>
     <figure class="media">
-      <div class="m3d" data-stl="assets/camera-full.stl"
+      <div class="m3d" data-stl="assets/camera-full.stl" data-rotate="-90,0,0"
            data-label="Full camera setup — drag to spin"></div>
       <figcaption>Full camera setup — shown from the source STL.</figcaption>
     </figure>
@@ -633,6 +633,12 @@ window.__onView = function (fn) {
 
     new THREE.STLLoader().load(url, function (geo) {
       loading.remove();
+      // CAD exports are Z-up; three.js is Y-up. Default -90 about X stands the
+      // part upright. Override per model with data-rotate="rx,ry,rz" (degrees).
+      var rot = (el.getAttribute('data-rotate') || '-90,0,0').split(',').map(Number);
+      if (rot[0]) geo.rotateX(rot[0] * Math.PI / 180);
+      if (rot[1]) geo.rotateY(rot[1] * Math.PI / 180);
+      if (rot[2]) geo.rotateZ(rot[2] * Math.PI / 180);
       geo.computeVertexNormals();
       geo.center();
       var mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
