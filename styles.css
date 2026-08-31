@@ -423,8 +423,8 @@ figure.media.is-missing { display: none; }
 .dio {
   position: relative;
   width: 100%;
-  height: 72vh;
-  min-height: 420px;
+  /* clamped: 72vh alone makes an absurdly tall frame on a big monitor */
+  height: clamp(380px, 68vh, 700px);
   border: 1px solid var(--border);
   border-radius: 10px;
   background: #000;                 /* matches the diagram's own dark canvas */
@@ -437,9 +437,21 @@ figure.media.is-missing { display: none; }
   background: var(--surface); color: var(--muted);
 }
 /* draw.io injects its own canvas + toolbar; keep them inside the rounded box */
-.dio > div { max-width: 100%; }
-.dio .geDiagramContainer { border-radius: 10px; }
+/* GraphViewer writes inline width/height/overflow onto these, so the frame has
+   to be pinned with !important or zooming pushes the diagram outside the box */
+.dio {
+  width: 100% !important;
+  height: clamp(380px, 68vh, 700px) !important;
+  overflow: hidden !important;
+}
+.dio > div,
+.dio .geDiagramContainer {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+}
+.dio svg { min-width: 0 !important; min-height: 0 !important; }
 
 @media (max-width: 640px) {
-  .dio { height: 56vh; min-height: 320px; }
+  .dio { height: clamp(300px, 56vh, 460px); }
 }
