@@ -427,7 +427,8 @@ figure.media.is-missing { display: none; }
   min-height: 420px;
   border: 1px solid var(--border);
   border-radius: 10px;
-  background: #000;                 /* matches the diagram's own dark canvas */
+  background: #121212;              /* exactly the colour draw.io paints its canvas,
+                                       so no band shows where the canvas ends */
   overflow: hidden;
 }
 .dio-status {
@@ -437,6 +438,10 @@ figure.media.is-missing { display: none; }
   background: var(--surface); color: var(--muted);
 }
 /* draw.io injects its own canvas + toolbar; keep them inside the rounded box */
+/* draw.io paints the SVG's own background black and draws its lighter page
+   rectangle inside it, which leaves a band wherever the page doesn't reach.
+   Let the container colour show instead so the surround is seamless. */
+.dio svg { background: transparent !important; }
 .dio > div { max-width: 100%; }
 .dio .geDiagramContainer { border-radius: 10px; }
 
