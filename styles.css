@@ -355,6 +355,20 @@ footer .wrap {
 }
 footer .foot-note { font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.03em; }
 
+/* real media, once dropped in */
+figure.media img, figure.media video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  margin: 0 auto;
+}
+
+figure.media { margin: 34px 0; }
+
+/* a figure whose media could not load removes itself rather than leaving a gap */
+figure.media.is-missing { display: none; }
+
 /* ---------- responsive ---------- */
 
 @media (max-width: 640px) {
