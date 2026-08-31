@@ -83,7 +83,8 @@ Your rule was "source wins, flag it." Applied as follows:
 
 - **Design:** dark engineering-notebook look — near-black background, one
   amber accent, monospace labels, generous spacing, system fonts only (no
-  webfonts, no JS, no external requests → fast and CSP-proof). Status colors:
+  webfonts, no external requests → fast and CSP-proof; the only JavaScript is
+  the ~20-line media auto-swap at the bottom of `index.html`). Status colors:
   green = complete, amber = in progress, gray = planned.
 - **Diagrams built in, not placeholders:** the three-layer control stack and
   the autonomy loop are rendered as styled HTML/CSS flow diagrams, since the
@@ -108,9 +109,13 @@ Your rule was "source wins, flag it." Applied as follows:
 
 ## Files you need to add to `assets/`
 
-Full table with tips lives in `assets/README.md`. Every placeholder block in
-`index.html` has an HTML comment right above it containing the exact
-swap-in markup to paste.
+Full table with tips (including HEIC/MOV conversion commands) lives in
+`assets/README.md`. **You never have to edit `index.html` to add media.** Each
+slot already points at its file in `assets/`; a small script at the bottom of
+`index.html` shows the real photo/video when the file is present and falls back
+to the labeled dashed placeholder box when it isn't. Drop a correctly-named
+file into `assets/` and that slot goes live on its own — one file at a time, in
+any order.
 
 | File | What it should show |
 |---|---|

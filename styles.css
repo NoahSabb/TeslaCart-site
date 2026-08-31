@@ -189,6 +189,15 @@ figure.media img, figure.media video {
 }
 
 figure.media { margin: 34px 0; }
+
+/* Auto-swap: a real media figure keeps its labeled placeholder box tucked away
+   and only reveals it if the file isn't in assets/ yet (see the script at the
+   bottom of index.html). Drop the file in, the real photo/video takes over. */
+figure.media > .media-slot { display: none; margin: 0; }
+figure.media.is-missing > .media-slot { display: block; }
+figure.media.is-missing > img,
+figure.media.is-missing > video,
+figure.media.is-missing > figcaption { display: none; }
 figcaption {
   font-size: 14px;
   color: var(--faint);
