@@ -45,11 +45,13 @@
       controls, a 360° camera rig, and an onboard neural network that learns
       to drive it.</p>
 
-    <figure class="media">
-      <video autoplay muted loop playsinline poster="assets/hero-poster.jpg">
-        <source src="assets/hero.mp4" type="video/mp4">
-      </video>
-    </figure>
+    <!-- Hero clip goes here once the cart overview video is shot.
+         Drop it in as assets/hero.mp4 and restore the figure below:
+         <figure class="media">
+           <video autoplay muted loop playsinline poster="assets/hero-poster.jpg">
+             <source src="assets/hero.mp4" type="video/mp4">
+           </video>
+         </figure> -->
   </div>
 </header>
 
@@ -73,13 +75,6 @@
       human in the driver's seat for every test. Everything is bolt-on and
       reversible: unplug the intercept harness and unbolt a couple of
       brackets, and the cart is stock again.</p>
-
-    <figure class="media">
-      <video muted loop playsinline preload="metadata" data-autoplay
-             aria-label="The TeslaCart — a 2015 Club Car Precedent with the camera rail and retrofit electronics visible">
-        <source src="assets/cart-wide.mp4" type="video/mp4">
-      </video>
-    </figure>
 
     <figure class="media">
       <video muted loop playsinline preload="metadata" data-autoplay
@@ -624,8 +619,37 @@
       </li>
 
       <li class="phase is-done">
+        <span class="phase-date">August 2026</span>
+        <h3>Phase 8 — Remote control <span class="tag tag--done">✅ Complete</span></h3>
+        <p>With throttle, steering, braking and direction all under firmware
+          control, the cart could be driven with <strong>nobody in it</strong> —
+          the operator standing outside, the seat empty. This is the step that
+          proves every subsystem works together rather than one at a time, and
+          it's the configuration the training data was later collected in: the
+          controller inputs <em>are</em> the labels, so what the model learns to
+          reproduce is exactly what was commanded here.</p>
+        <div class="media-grid">
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="The cart driving down the street under remote control with nobody in it">
+              <source src="assets/rc-driving.mp4" type="video/mp4">
+            </video>
+            <figcaption>Driving away with an empty seat — throttle, steering and
+              direction all commanded remotely.</figcaption>
+          </figure>
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="The cart driving under remote control with a dog sitting in the passenger seat">
+              <source src="assets/rc-dog.mp4" type="video/mp4">
+            </video>
+            <figcaption>The first passenger.</figcaption>
+          </figure>
+        </div>
+      </li>
+
+      <li class="phase is-done">
         <span class="phase-date">August 23–30, 2026</span>
-        <h3>Phase 8 — Camera subsystem <span class="tag tag--done">✅ Complete</span></h3>
+        <h3>Phase 9 — Camera subsystem <span class="tag tag--done">✅ Complete</span></h3>
         <p>The gating test <strong>passed: all six cameras stream 1080p30 MJPEG
           concurrently on the Jetson</strong> — 20–27&nbsp;fps each, zero failed
           grabs, zero corrupt frames. Getting there took real driver work. Out
@@ -661,7 +685,7 @@
 
       <li class="phase is-done">
         <span class="phase-date">August 30, 2026</span>
-        <h3>Phase 9 — GPS &amp; routing layer <span class="tag tag--done">✅ Complete</span></h3>
+        <h3>Phase 10 — GPS &amp; routing layer <span class="tag tag--done">✅ Complete</span></h3>
         <p>Receiver and antenna <strong>installed and working</strong>: a u-blox NEO-F10N
           (dual-band L1/L5 with multipath mitigation, ~1.5&nbsp;m accuracy) and a
           multi-band active antenna — deliberately the more expensive half,
@@ -683,7 +707,7 @@
 
       <li class="phase is-done">
         <span class="phase-date">August 2026 →</span>
-        <h3>Phase 10 — Autonomy (VLA training) <span class="tag tag--done">✅ Complete</span></h3>
+        <h3>Phase 11 — Autonomy (VLA training) <span class="tag tag--done">✅ Complete</span></h3>
         <p>Underway. The data-collection design is locked —
           language-conditioned episodes with a frozen instruction vocabulary,
           labeled at record time from the controller, 100+ episodes per maneuver
@@ -707,7 +731,7 @@
 
       <li class="phase">
         <span class="phase-date">Later</span>
-        <h3>Phase 11 — LiDAR <span class="tag tag--plan">⬜ Planned</span></h3>
+        <h3>Phase 12 — LiDAR <span class="tag tag--plan">⬜ Planned</span></h3>
         <p>Not started, deliberately deferred. An independent, depth-sensing
           obstacle-detection layer alongside the cameras — a second opinion
           that doesn't share the cameras' failure modes (glare, low light,
