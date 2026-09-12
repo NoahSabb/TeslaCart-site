@@ -29,9 +29,9 @@ throttle-box:mp4 camera-bringup:mp4 soldering:mp4 \
 steering-demo:mp4 brake-demo:mp4 safety-override:mp4 reverse-demo:mp4 \
 subsystem-showcase:mp4 self-driving:mp4 \
 pcb-unboxing:mp4 pcb-assembly:mp4 pcb-design:mp4 \
-camera-wiring-1:mp4 camera-wiring-2:mp4 dash-mounting:mp4 \
+dash-mounting:mp4 \
 throttle-pot:mp4 throttle-underfloor:mp4 throttle-schematic:mp4 throttle-start:mp4 \
-soldering-wires:mp4 boards-flatlay:jpg pcb-layout:jpg power-dash:mp4"
+soldering-wires:mp4 boards-flatlay:jpg pcb-layout:jpg power-dash:mp4 gps-antenna:mp4 camera-rail-build:mp4"
 
 MAXW=2000        # max image width in px
 VIDH="${VIDH:-1080}"   # max video height in px. Override: VIDH=720 ./prep-media.sh ...
