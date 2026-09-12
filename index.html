@@ -16,9 +16,28 @@
 <body>
 
 <!-- ================================================================
+     STICKY SECTION NAV
+     One scrolling page; these jump to each section and highlight whichever
+     one you're currently in.
+     ================================================================ -->
+<nav class="snav" aria-label="Sections">
+  <div class="snav-wrap">
+    <a class="snav-brand" href="#top">TeslaCart</a>
+    <div class="snav-tabs" role="list">
+      <a href="#overview"  data-sec="overview">Overview</a>
+      <a href="#hardware"  data-sec="hardware">Hardware</a>
+      <a href="#software"  data-sec="software">Software</a>
+      <a href="#build-log" data-sec="build-log">Build log</a>
+      <a href="#next"      data-sec="next">Roadmap</a>
+    </div>
+    <a class="snav-repo" href="https://github.com/NoahSabb/TeslaCart">Code</a>
+  </div>
+</nav>
+
+<!-- ================================================================
      1. HERO
      ================================================================ -->
-<header class="hero">
+<header class="hero" id="top">
   <div class="wrap">
     <p class="eyebrow">Solo build · Summer 2026</p>
     <h1>TeslaCart <span class="thin">— a self-driving golf cart</span></h1>
@@ -796,6 +815,34 @@ window.__onView = function (fn) {
       return false;
     });
   });
+})();
+</script>
+
+<!-- ================================================================
+     SECTION NAV BEHAVIOUR
+     Highlights the tab for whichever section is currently under the nav bar.
+     ================================================================ -->
+<script>
+(function () {
+  var nav = document.querySelector('.snav');
+  if (!nav) return;
+  var tabs = Array.prototype.slice.call(nav.querySelectorAll('[data-sec]'));
+  var secs = tabs.map(function (t) { return document.getElementById(t.getAttribute('data-sec')); });
+
+  function mark() {
+    var line = nav.offsetHeight + 40;       // just under the bar
+    var active = -1;
+    for (var i = 0; i < secs.length; i++) {
+      if (secs[i] && secs[i].getBoundingClientRect().top <= line) active = i;
+    }
+    // past the last section (footer) keep the last tab lit
+    tabs.forEach(function (t, i) { t.classList.toggle('is-active', i === active); });
+    nav.classList.toggle('is-stuck', window.scrollY > 8);
+  }
+
+  window.addEventListener('scroll', mark, { passive: true });
+  window.addEventListener('resize', mark);
+  mark();
 })();
 </script>
 

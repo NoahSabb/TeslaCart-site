@@ -448,3 +448,105 @@ figure.media.is-missing { display: none; }
 @media (max-width: 640px) {
   .dio { height: 56vh; min-height: 320px; }
 }
+
+/* ---------- sticky section nav ---------- */
+
+html { scroll-behavior: smooth; }
+
+/* anchors land below the bar instead of under it */
+section[id], header[id] { scroll-margin-top: 68px; }
+
+.snav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(13, 17, 23, 0.82);
+  -webkit-backdrop-filter: saturate(150%) blur(12px);
+  backdrop-filter: saturate(150%) blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.snav.is-stuck {
+  border-bottom-color: var(--border);
+  background: rgba(13, 17, 23, 0.94);
+}
+
+.snav-wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.snav-brand {
+  font-weight: 650;
+  font-size: 15px;
+  color: var(--text);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  flex: none;
+}
+.snav-brand:hover { color: #fff; }
+
+.snav-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  flex: 1 1 auto;
+}
+.snav-tabs::-webkit-scrollbar { display: none; }
+
+.snav-tabs a {
+  position: relative;
+  flex: none;
+  padding: 8px 12px;
+  border-radius: 7px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.snav-tabs a:hover { color: var(--text); background: var(--surface); }
+
+.snav-tabs a.is-active {
+  color: var(--accent);
+  background: rgba(242, 163, 60, 0.10);
+}
+
+.snav-repo {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--faint);
+  text-decoration: none;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  white-space: nowrap;
+}
+.snav-repo:hover { color: var(--accent); border-color: var(--accent-dim); }
+
+@media (max-width: 720px) {
+  .snav-wrap { padding: 0 16px; gap: 12px; height: 52px; }
+  .snav-repo { display: none; }
+  .snav-tabs a { padding: 7px 10px; font-size: 12px; }
+  section[id], header[id] { scroll-margin-top: 60px; }
+}
+@media (max-width: 420px) {
+  .snav-brand { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
