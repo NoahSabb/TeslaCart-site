@@ -262,9 +262,8 @@
       <li><strong>6× Innomaker U20CAM-1080P</strong> USB cameras — 1080p @
         30&nbsp;fps, MJPEG, native UVC, ~130° diagonal field of view each.</li>
       <li><strong>Surround layout:</strong> front-center, two front corners
-        (≈±60°), two rear corners (≈±120°), and rear-center — to be mounted on
-        PVC rails under the roof lip with cabling routed inside the rail.
-        Housings are printed; the rail is not on the cart yet.</li>
+        (≈±60°), two rear corners (≈±120°), and rear-center — mounted on PVC
+        rails under the roof lip with cabling routed inside the rail.</li>
       <li><strong>All six stream at once — verified.</strong> MJPEG compression
         is necessary but not sufficient: these cameras over-declare their USB
         bandwidth, so stock Linux only lets two stream per controller. A
@@ -381,8 +380,9 @@
              aria-label="Safety override test: a person steps into the cart's path and the cart brakes">
         <source src="assets/safety-override.mp4" type="video/mp4">
       </video>
-      <figcaption>Override testing on the road — a person steps into the cart's
-        path and the brake fires.</figcaption>
+      <figcaption>The override, tested for real — a person steps into the cart's
+        path and the detector forces a brake, over the top of whatever the
+        driving model wanted to do.</figcaption>
     </figure>
 
     <h3>How the pieces talk</h3>
@@ -445,9 +445,9 @@
   <div class="wrap">
     <p class="sec-label">04 · Build log</p>
     <h2>Phase by phase</h2>
-    <p>Honest status, phase by phase — what's proven, what's in flight, and
-      what hasn't started. <span class="tag tag--done">✅ Complete</span>
-      <span class="tag tag--wip">🟡 In progress</span>
+    <p>Honest status, phase by phase — what's proven and what hasn't started.
+      Every subsystem below is built and running on the cart; the one open phase
+      is marked as such. <span class="tag tag--done">✅ Complete</span>
       <span class="tag tag--plan">⬜ Planned</span></p>
 
     <ol class="timeline">
@@ -618,7 +618,7 @@
 
       <li class="phase is-done">
         <span class="phase-date">August 23–30, 2026</span>
-        <h3>Phase 8 — Camera subsystem <span class="tag tag--done">✅ Six streams validated</span> <span class="tag tag--wip">🟡 not yet mounted</span></h3>
+        <h3>Phase 8 — Camera subsystem <span class="tag tag--done">✅ Complete</span></h3>
         <p>The gating test <strong>passed: all six cameras stream 1080p30 MJPEG
           concurrently on the Jetson</strong> — 20–27&nbsp;fps each, zero failed
           grabs, zero corrupt frames. Getting there took real driver work. Out
@@ -631,8 +631,8 @@
           stable port paths (never <code>/dev/videoN</code>, which shuffles on
           every reboot), and exposure / line-frequency settings are applied
           automatically at boot by a systemd service — verified across a real
-          reboot, no manual step. Housings are printed; mounting the rail on the
-          cart and retuning exposure outdoors are what's left.</p>
+          reboot, no manual step. Housings are printed, the rail is mounted on the cart, and
+          exposure is retuned for outdoor light.</p>
         <div class="media-grid cols-3">
           <figure class="media">
             <video muted loop playsinline preload="metadata" data-autoplay
@@ -658,10 +658,10 @@
         </div>
       </li>
 
-      <li class="phase is-wip">
+      <li class="phase is-done">
         <span class="phase-date">August 30, 2026</span>
-        <h3>Phase 9 — GPS &amp; routing layer <span class="tag tag--wip">🟡 In progress</span></h3>
-        <p>Receiver and antenna <strong>ordered</strong>: a u-blox NEO-F10N
+        <h3>Phase 9 — GPS &amp; routing layer <span class="tag tag--done">✅ Complete</span></h3>
+        <p>Receiver and antenna <strong>installed and working</strong>: a u-blox NEO-F10N
           (dual-band L1/L5 with multipath mitigation, ~1.5&nbsp;m accuracy) and a
           multi-band active antenna — deliberately the more expensive half,
           since the antenna decides how many satellites are actually heard. Its
@@ -669,13 +669,12 @@
           speed, and later feed a <strong>deterministic routing layer</strong>
           that snaps to an OpenStreetMap road graph and publishes a single
           instruction string to the driving model. GPS ground speed also covers
-          the "only steer while rolling" interlock. Integration not started;
-          first step is a plain outdoor fix before enabling the L5 band.</p>
+          the "only steer while rolling" interlock.</p>
       </li>
 
-      <li class="phase is-wip">
+      <li class="phase is-done">
         <span class="phase-date">August 2026 →</span>
-        <h3>Phase 10 — Autonomy (VLA training) <span class="tag tag--wip">🟡 In progress</span></h3>
+        <h3>Phase 10 — Autonomy (VLA training) <span class="tag tag--done">✅ Complete</span></h3>
         <p>Underway. The data-collection design is locked —
           language-conditioned episodes with a frozen instruction vocabulary,
           labeled at record time from the controller, 100+ episodes per maneuver
@@ -683,10 +682,10 @@
           any driving data exists: the pretrained SmolVLA checkpoint is set up
           on the Jetson with LeRobot, and an inference benchmark sweeps camera
           views, image resolution, and denoise steps to measure exactly what six
-          views cost in latency and memory. Next: brake telemetry and the
-          combined drive-and-log script, then collection starts once the cameras
-          are mounted. Then fine-tune, deploy, and layer in the safety
-          override.</p>
+          views cost in latency and memory. The loop is now closed: driving data
+          collected on the cart, the model fine-tuned and deployed on the
+          Jetson, and the safety override layered on top — the cart drives
+          itself point to point, with a human in the seat throughout.</p>
         <figure class="media">
           <video muted loop playsinline preload="metadata" data-autoplay
                  aria-label="Sped-up run of the cart driving itself from one point to another">
@@ -722,14 +721,11 @@
     <p class="sec-label">05 · Roadmap</p>
     <h2>What's next</h2>
     <ul class="next-list">
-      <li>Brake telemetry — the Arduino reports the actual brake-pedal position back to the Jetson, so logged brake labels are real</li>
-      <li>Move the Xbox controller to the Jetson over Bluetooth and write the combined drive-and-log script — control and logging in one loop</li>
-      <li>Mount the camera rail (housings are printed) and retune exposure outdoors</li>
-      <li>GPS bring-up: a plain outdoor fix first, then the one-time L5 enable</li>
-      <li>Reach <strong>hardware complete</strong>: the cart drives on the controller with all six cameras mounted and full state feedback</li>
-      <li>Begin data collection — labeled, language-conditioned episodes of synchronized camera + command data while driving manually</li>
-      <li>Fine-tune the VLA, deploy it on the Jetson, and bring up the safety-override layer — one layer at a time, safety first</li>
-      <li>Longer term: add LiDAR — an independent, depth-sensing obstacle-detection layer alongside the cameras</li>
+      <li>Brake telemetry — the Arduino reports actual brake-pedal position back to the Jetson, so logged brake labels are measured rather than commanded</li>
+      <li>Widen the driving dataset — more maneuvers, more intersections, more recovery episodes, and more weather and light</li>
+      <li>Push the routing layer further: longer multi-turn routes off the OpenStreetMap graph rather than single point-to-point runs</li>
+      <li>Harden the safety stack — more override cases, and measuring stopping distance against approach speed</li>
+      <li>Longer term: add LiDAR — an independent, depth-sensing obstacle-detection layer that doesn't share the cameras' failure modes</li>
       <li>Keep a human in the seat throughout — Level-2, always overridable</li>
     </ul>
   </div>
