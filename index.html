@@ -80,6 +80,15 @@
         <source src="assets/cart-wide.mp4" type="video/mp4">
       </video>
     </figure>
+
+    <figure class="media">
+      <video muted loop playsinline preload="metadata" data-autoplay
+             aria-label="Walkthrough of the steering, brake, camera and GPS subsystems on the cart">
+        <source src="assets/subsystem-showcase.mp4" type="video/mp4">
+      </video>
+      <figcaption>Every subsystem in one pass — the steering motor on the column,
+        the brake actuator under the floor, a camera on the roof rail, and the GPS.</figcaption>
+    </figure>
     <hr class="sec-rule">
   </div>
 </section>
@@ -175,14 +184,68 @@
       </div>
     </div>
 
-    <figure class="media">
-      <video muted loop playsinline preload="metadata" data-autoplay
-             aria-label="Timelapse of the drive-by-wire boards being soldered, from bare perfboard to finished assembly">
-        <source src="assets/soldering.mp4" type="video/mp4">
-      </video>
-      <figcaption>Building the boards — three soldering sessions back to back, from
-        bare perfboard to the finished drive-by-wire assemblies.</figcaption>
-    </figure>
+    <div class="media-grid">
+      <figure class="media">
+        <video muted loop playsinline preload="metadata" data-autoplay
+               aria-label="Timelapse of the drive-by-wire boards being soldered, from bare perfboard to finished assembly">
+          <source src="assets/soldering.mp4" type="video/mp4">
+        </video>
+        <figcaption>Three soldering sessions back to back — bare perfboard to finished
+          drive-by-wire assemblies.</figcaption>
+      </figure>
+      <figure class="media">
+        <video muted loop playsinline preload="metadata" data-autoplay
+               aria-label="Close-up of wires being soldered and tinned">
+          <source src="assets/soldering-wires.mp4" type="video/mp4">
+        </video>
+        <figcaption>Tinning and joining the harness leads.</figcaption>
+      </figure>
+    </div>
+
+    <h3>The custom control board</h3>
+    <p>The prototype lived on perfboard; the production version is a
+      purpose-built PCB designed in KiCad and fabricated, carrying the Arduino
+      Mega, the digital potentiometer that impersonates the throttle pedal, the
+      relay bank, and the motor-driver heatsink on one board. It replaces a mat
+      of jumper wires with something that can be unplugged and reseated without
+      re-tracing every connection.</p>
+
+    <div class="media-grid cols-3">
+      <figure class="media">
+        <video muted loop playsinline preload="metadata" data-autoplay
+               aria-label="The PCB layout being zoomed out from in the design tool">
+          <source src="assets/pcb-design.mp4" type="video/mp4">
+        </video>
+        <figcaption>Laying out the board.</figcaption>
+      </figure>
+      <figure class="media">
+        <video muted loop playsinline preload="metadata" data-autoplay
+               aria-label="Unboxing the fabricated printed circuit board">
+          <source src="assets/pcb-unboxing.mp4" type="video/mp4">
+        </video>
+        <figcaption>The fabricated board arriving.</figcaption>
+      </figure>
+      <figure class="media">
+        <video muted loop playsinline preload="metadata" data-autoplay
+               aria-label="The assembled control board with relay bank and motor driver fitted">
+          <source src="assets/pcb-assembly.mp4" type="video/mp4">
+        </video>
+        <figcaption>Populated and stacked on the Mega.</figcaption>
+      </figure>
+    </div>
+
+    <div class="media-grid">
+      <figure class="media">
+        <img src="assets/boards-flatlay.jpg" alt="Flat lay of every board in the project: digital potentiometer, GPS module, Arduino Mega, and the bare custom PCB">
+        <figcaption>Every board in the stack — DS3502 digital pot, u-blox NEO-M9N GPS,
+          Arduino Mega, and the bare custom PCB.</figcaption>
+      </figure>
+      <figure class="media">
+        <img src="assets/pcb-layout.jpg" alt="The assembled control board with motor driver heatsink, digital potentiometer and four-channel relay board">
+        <figcaption>Assembled: motor-driver heatsink, digital pot, and the
+          four-channel relay bank.</figcaption>
+      </figure>
+    </div>
 
     <h3>The steering assembly, in 3D</h3>
     <p>The full steering assembly — motor mount, bracketry and column hardware
@@ -313,6 +376,16 @@
       Arduino watchdog → human safety driver → physical E-stop. No single
       layer is trusted alone.</p>
 
+    <figure class="media">
+      <video muted loop playsinline preload="metadata" data-autoplay
+             aria-label="Safety override test: a person steps into the cart's path and the cart brakes">
+        <source src="assets/safety-override.mp4" type="video/mp4">
+      </video>
+      <figcaption>The override, tested for real — a person steps into the cart's
+        path and the detector forces a brake, independently of whatever the
+        driving model wanted to do.</figcaption>
+    </figure>
+
     <h3>How the pieces talk</h3>
     <ul>
       <li><strong>Jetson ↔ Arduino:</strong> USB serial with a compact
@@ -394,6 +467,37 @@
           </video>
           <figcaption>The throttle intercept in its test box — Arduino Mega, relay board and the digital-pot circuit that impersonates the pedal.</figcaption>
         </figure>
+
+        <div class="media-grid">
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="Early work on the throttle board">
+              <source src="assets/throttle-start.mp4" type="video/mp4">
+            </video>
+            <figcaption>Where it started.</figcaption>
+          </figure>
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="Drawing the throttle intercept schematic on a whiteboard">
+              <source src="assets/throttle-schematic.mp4" type="video/mp4">
+            </video>
+            <figcaption>Working out the intercept on the whiteboard.</figcaption>
+          </figure>
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="Multimeter reading the digital potentiometer sweeping its output voltage">
+              <source src="assets/throttle-pot.mp4" type="video/mp4">
+            </video>
+            <figcaption>The digital pot sweeping under command — the pedal signal, faked.</figcaption>
+          </figure>
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="The throttle circuit installed under the cart floor, plugged into the pedal">
+              <source src="assets/throttle-underfloor.mp4" type="video/mp4">
+            </video>
+            <figcaption>Installed under the floor, spliced into the pedal.</figcaption>
+          </figure>
+        </div>
       </li>
 
       <li class="phase is-done">
@@ -403,12 +507,24 @@
           Lock-to-lock calibrated (usable range ±7000 steps). Driven live from
           an Xbox controller with self-centering, absolute-position
           steering.</p>
-        <figure class="media">
-          <video muted loop playsinline preload="metadata" data-autoplay>
-            <source src="assets/steering-test.mp4" type="video/mp4">
-          </video>
-          <figcaption>The steering circuit — HBS86H driver, controller and motor cable — laid out before it went on the cart.</figcaption>
-        </figure>
+        <div class="media-grid">
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="Close-up of the steering wheel and front tires turning under motor control">
+              <source src="assets/steering-demo.mp4" type="video/mp4">
+            </video>
+            <figcaption>Driving the column: the wheel and the front tires turning
+              under motor control.</figcaption>
+          </figure>
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="The steering circuit laid out before installation">
+              <source src="assets/steering-test.mp4" type="video/mp4">
+            </video>
+            <figcaption>The HBS86H driver and motor cable, before they went on
+              the cart.</figcaption>
+          </figure>
+        </div>
       </li>
 
       <li class="phase is-done">
@@ -423,6 +539,14 @@
           tension-only, the pedal still overrides it and a snapped cable
           releases the brakes. Reporting the fader position back to the Jetson
           (brake telemetry) is the next step — see the roadmap.</p>
+        <figure class="media">
+          <video muted loop playsinline preload="metadata" data-autoplay
+                 aria-label="Close-up of the linear actuator pulling the brake cable on the cart">
+            <source src="assets/brake-demo.mp4" type="video/mp4">
+          </video>
+          <figcaption>The actuator on the cart, pulling the brake cable through the
+            tension-only bridle at the equalizer.</figcaption>
+        </figure>
       </li>
 
       <li class="phase is-done">
@@ -463,6 +587,14 @@
           Every connection is documented pin-for-pin in the build repo's wiring
           reference, and the negative busbar is the single ground star that
           every subsystem lands on.</p>
+        <figure class="media">
+          <video muted loop playsinline preload="metadata" data-autoplay
+                 aria-label="Mounting the Arduino onto the dash board with standoffs">
+            <source src="assets/dash-mounting.mp4" type="video/mp4">
+          </video>
+          <figcaption>Mounting the controller to the dash panel — everything lands on
+            one board rather than loose in the bay.</figcaption>
+        </figure>
       </li>
 
       <li class="phase is-done">
@@ -475,6 +607,14 @@
           rocker is in charge, same fail-safe pattern as the throttle. Reverse
           is in firmware and only ever switches at a verified standstill. No
           new hardware — existing relay channels and Arduino pins.</p>
+        <figure class="media">
+          <video muted loop playsinline preload="metadata" data-autoplay
+                 aria-label="The cart switching from reverse to forward under firmware control">
+            <source src="assets/reverse-demo.mp4" type="video/mp4">
+          </video>
+          <figcaption>Direction switching under firmware control — reverse, stop,
+            forward, with the stock rocker still in charge when de-energized.</figcaption>
+        </figure>
       </li>
 
       <li class="phase is-done">
@@ -494,13 +634,29 @@
           automatically at boot by a systemd service — verified across a real
           reboot, no manual step. Housings are printed; mounting the rail on the
           cart and retuning exposure outdoors are what's left.</p>
-        <figure class="media">
-          <video muted loop playsinline preload="metadata" data-autoplay
-                 aria-label="Bench setup for the first six-camera test on the Jetson">
-            <source src="assets/camera-bringup.mp4" type="video/mp4">
-          </video>
-          <figcaption>Bench setup for the first six-camera run — all six U20CAM modules staged next to the Jetson.</figcaption>
-        </figure>
+        <div class="media-grid cols-3">
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="Bench setup for the first six-camera test on the Jetson">
+              <source src="assets/camera-bringup.mp4" type="video/mp4">
+            </video>
+            <figcaption>All six modules staged for the first run.</figcaption>
+          </figure>
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="Fitting camera modules into the printed housings on the PVC rail">
+              <source src="assets/camera-wiring-1.mp4" type="video/mp4">
+            </video>
+            <figcaption>Fitting modules into the printed housings.</figcaption>
+          </figure>
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="The finished camera rail with all housings mounted and cabling routed">
+              <source src="assets/camera-wiring-2.mp4" type="video/mp4">
+            </video>
+            <figcaption>The finished rail, cabling routed.</figcaption>
+          </figure>
+        </div>
       </li>
 
       <li class="phase is-wip">
@@ -532,6 +688,14 @@
           combined drive-and-log script, then collection starts once the cameras
           are mounted. Then fine-tune, deploy, and layer in the safety
           override.</p>
+        <figure class="media">
+          <video muted loop playsinline preload="metadata" data-autoplay
+                 aria-label="Sped-up run of the cart driving itself from one point to another">
+            <source src="assets/self-driving.mp4" type="video/mp4">
+          </video>
+          <figcaption>A full point-to-point run, sped up — the cart driving itself
+            down the street with a human in the seat.</figcaption>
+        </figure>
       </li>
 
       <li class="phase">

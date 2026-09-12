@@ -550,3 +550,26 @@ section[id], header[id] { scroll-margin-top: 68px; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
+
+/* ---------- side-by-side media grids ---------- */
+
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin: 34px 0;
+}
+.media-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+.media-grid figure.media { margin: 0; }
+.media-grid figure.media video,
+.media-grid figure.media img { border-radius: 8px; }
+.media-grid figcaption {
+  font-size: 13px;
+  line-height: 1.45;
+  margin-top: 8px;
+}
+
+@media (max-width: 760px) {
+  .media-grid, .media-grid.cols-3 { grid-template-columns: 1fr; gap: 18px; }
+}
