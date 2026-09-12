@@ -486,10 +486,11 @@
           </figure>
           <figure class="media">
             <video muted loop playsinline preload="metadata" data-autoplay
-                   aria-label="Multimeter reading the digital potentiometer sweeping its output voltage">
-              <source src="assets/throttle-pot.mp4" type="video/mp4">
+                   aria-label="Driving the cart forward using only the spacebar on a laptop">
+              <source src="assets/drive-test.mp4" type="video/mp4">
             </video>
-            <figcaption>The digital pot sweeping under command — the pedal signal, faked.</figcaption>
+            <figcaption>Driving the cart on the spacebar alone — no pedal, no servo,
+              just the intercept taking commands.</figcaption>
           </figure>
           <figure class="media">
             <video muted loop playsinline preload="metadata" data-autoplay
@@ -561,25 +562,10 @@
           keyboard needed.</p>
       </li>
 
-      <li class="phase is-done">
-        <span class="phase-date">August 2026</span>
-        <h3>Phase 5 — Manual controller driving <span class="tag tag--done">✅ Complete (throttle + steering)</span></h3>
-        <p>Xbox-controller drive integrating throttle + steering through one
-          firmware path — absolute-position steering on the left stick with
-          expo-shaped sensitivity, gradual throttle on the right trigger,
-          streamed at ~50&nbsp;Hz with a fail-safe that zeroes throttle if the
-          link drops. Reverse was added afterwards — see Phase&nbsp;7.</p>
-        <figure class="media">
-          <video muted loop playsinline preload="metadata" data-autoplay>
-            <source src="assets/drive-test.mp4" type="video/mp4">
-          </video>
-          <figcaption>Controller-driven test on the ground.</figcaption>
-        </figure>
-      </li>
 
       <li class="phase is-done">
         <span class="phase-date">August 2026</span>
-        <h3>Phase 6 — Power distribution <span class="tag tag--done">✅ Complete</span></h3>
+        <h3>Phase 5 — Power distribution <span class="tag tag--done">✅ Complete</span></h3>
         <p>The whole trunk is <strong>wired on the cart</strong>: 48&nbsp;V pack →
           master disconnect switch → main fuse → positive/negative busbars →
           individually fused branches, with separate DC-DC converters so the
@@ -600,7 +586,7 @@
 
       <li class="phase is-done">
         <span class="phase-date">August 2026</span>
-        <h3>Phase 7 — Forward / Reverse <span class="tag tag--done">✅ Complete</span></h3>
+        <h3>Phase 6 — Forward / Reverse <span class="tag tag--done">✅ Complete</span></h3>
         <p>The 3-wire direction harness was <strong>meter-tested on the cart</strong>
           — forward, reverse, and common identified, polarity confirmed — and
           the two relays wired: one hands control from the real rocker switch
@@ -620,7 +606,7 @@
 
       <li class="phase is-done">
         <span class="phase-date">August 2026</span>
-        <h3>Phase 8 — Remote control <span class="tag tag--done">✅ Complete</span></h3>
+        <h3>Phase 7 — Remote control <span class="tag tag--done">✅ Complete</span></h3>
         <p>With throttle, steering, braking and direction all under firmware
           control, the cart could be driven with <strong>nobody in it</strong> —
           the operator standing outside, the seat empty. This is the step that
@@ -649,7 +635,7 @@
 
       <li class="phase is-done">
         <span class="phase-date">August 23–30, 2026</span>
-        <h3>Phase 9 — Camera subsystem <span class="tag tag--done">✅ Complete</span></h3>
+        <h3>Phase 8 — Camera subsystem <span class="tag tag--done">✅ Complete</span></h3>
         <p>The gating test <strong>passed: all six cameras stream 1080p30 MJPEG
           concurrently on the Jetson</strong> — 20–27&nbsp;fps each, zero failed
           grabs, zero corrupt frames. Getting there took real driver work. Out
@@ -685,7 +671,7 @@
 
       <li class="phase is-done">
         <span class="phase-date">August 30, 2026</span>
-        <h3>Phase 10 — GPS &amp; routing layer <span class="tag tag--done">✅ Complete</span></h3>
+        <h3>Phase 9 — GPS &amp; routing layer <span class="tag tag--done">✅ Complete</span></h3>
         <p>Receiver and antenna <strong>installed and working</strong>: a u-blox NEO-F10N
           (dual-band L1/L5 with multipath mitigation, ~1.5&nbsp;m accuracy) and a
           multi-band active antenna — deliberately the more expensive half,
@@ -707,7 +693,7 @@
 
       <li class="phase is-done">
         <span class="phase-date">August 2026 →</span>
-        <h3>Phase 11 — Autonomy (VLA training) <span class="tag tag--done">✅ Complete</span></h3>
+        <h3>Phase 10 — Autonomy (VLA training) <span class="tag tag--done">✅ Complete</span></h3>
         <p>Underway. The data-collection design is locked —
           language-conditioned episodes with a frozen instruction vocabulary,
           labeled at record time from the controller, 100+ episodes per maneuver
@@ -731,7 +717,7 @@
 
       <li class="phase">
         <span class="phase-date">Later</span>
-        <h3>Phase 12 — LiDAR <span class="tag tag--plan">⬜ Planned</span></h3>
+        <h3>Phase 11 — LiDAR <span class="tag tag--plan">⬜ Planned</span></h3>
         <p>Not started, deliberately deferred. An independent, depth-sensing
           obstacle-detection layer alongside the cameras — a second opinion
           that doesn't share the cameras' failure modes (glare, low light,
