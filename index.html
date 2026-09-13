@@ -30,7 +30,9 @@
       <a href="#build-log" data-sec="build-log">Build log</a>
       <a href="#next"      data-sec="next">Roadmap</a>
     </div>
+    <!-- Code link, hidden until the build repo is public. Restore by uncommenting:
     <a class="snav-repo" href="https://github.com/NoahSabb/TeslaCart">Code</a>
+    -->
   </div>
 </nav>
 
@@ -71,8 +73,7 @@
       model trained on real driving demonstrations rather than hand-written
       rules.</p>
     <p>It's a full-stack build spanning custom electronics, embedded firmware,
-      and modern machine learning, done solo, on a student budget, with a
-      human in the driver's seat for every test. Everything is bolt-on and
+      and modern machine learning, done solo, on a student budget. Everything is bolt-on and
       reversible: unplug the intercept harness and unbolt a couple of
       brackets, and the cart is stock again.</p>
 
@@ -268,7 +269,7 @@
     </div>
 
     <h3>The steering assembly, in 3D</h3>
-    <p>Nothing about the mount was off the shelf — it had to locate a NEMA&nbsp;34
+    <p>Nothing about the mount was off the shelf. It had to locate a NEMA&nbsp;34
       against a steering column that was never meant to carry one, hold the belt
       at the right tension, and still bolt to existing holes. It was modelled
       from measurements of the cart:</p>
@@ -290,7 +291,7 @@
       </figure>
     </div>
 
-    <p>And here is what came out of it — drag to spin, scroll to zoom. This is the
+    <p>And here is what came out of it. Drag to spin, scroll to zoom; this is the
       real CAD, loaded straight from the STL in the build repo.</p>
     <figure class="media">
       <div class="m3d" data-stl="assets/steering-full.stl" data-rotate="-90,0,0"
@@ -424,9 +425,13 @@
       detection already running on the Jetson (SSD-MobileNet via TensorRT,
       validated with live bounding boxes).</p>
     <p><strong>Defense in depth:</strong> learned model → explicit detector →
-      Arduino watchdog → human safety driver → a physical cutoff switch that
-      hands the cart back to full manual control. No single layer is trusted
-      alone.</p>
+      Arduino watchdog → a kill switch on the operator's controller → a physical
+      cutoff switch on the cart. No single layer is trusted alone.</p>
+    <p>Testing is done with the cart empty and the operator on foot alongside it,
+      not from the driver's seat. Killing throttle from the controller drops the
+      relays and returns the cart to stock, and at the speeds being tested a
+      person on foot can stay ahead of it. Everything runs on private property or
+      permitted low-speed neighborhood roads, never on public sidewalks.</p>
 
     <figure class="media">
       <video muted loop playsinline preload="metadata" data-autoplay
@@ -778,14 +783,14 @@
           views cost in latency and memory. The loop is now closed: driving data
           collected on the cart, the model fine-tuned and deployed on the
           Jetson, and the safety override layered on top, with the cart driving
-          itself point to point and a human in the seat throughout.</p>
+          itself point to point.</p>
         <figure class="media">
           <video muted loop playsinline preload="metadata" data-autoplay
                  aria-label="Sped-up run of the cart driving itself from one point to another">
             <source src="assets/self-driving.mp4" type="video/mp4">
           </video>
           <figcaption>A full point-to-point run, sped up: the cart driving itself
-            down the street with a human in the seat.</figcaption>
+            down the street, with the seat empty and the operator alongside.</figcaption>
         </figure>
       </li>
 
@@ -818,7 +823,7 @@
       <li>Push the routing layer further: longer multi-turn routes off the OpenStreetMap graph rather than single point-to-point runs</li>
       <li>Harden the safety stack: more override cases, and measured stopping distance against approach speed</li>
       <li>Longer term, add LiDAR: an independent, depth-sensing obstacle-detection layer that doesn't share the cameras' failure modes</li>
-      <li>Keep a human in the seat throughout: Level-2, always overridable</li>
+      <li>Keep every run overridable: kill switch on the controller, cutoff switch on the cart, speeds low enough to stay ahead of on foot</li>
     </ul>
   </div>
 </section>
@@ -834,7 +839,7 @@
       <strong style="color:var(--text)">TeslaCart</strong> · built by Noah Sabbavarapu
       · <a href="https://github.com/NoahSabb/TeslaCart">code on GitHub</a>
     </div>
-    <div class="foot-note">A human sits in the driver's seat for every test. No exceptions.</div>
+    <div class="foot-note">Every run is overridable: kill switch on the controller, cutoff switch on the cart.</div>
   </div>
 </footer>
 
