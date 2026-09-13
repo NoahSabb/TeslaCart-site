@@ -47,13 +47,21 @@
       controls, a 360° camera rig, and an onboard neural network that learns
       to drive it.</p>
 
-    <!-- Hero clip goes here once the cart overview video is shot.
-         Drop it in as assets/hero.mp4 and restore the figure below:
-         <figure class="media">
-           <video autoplay muted loop playsinline poster="assets/hero-poster.jpg">
-             <source src="assets/hero.mp4" type="video/mp4">
-           </video>
-         </figure> -->
+    <figure class="media hero-player">
+      <video autoplay muted loop playsinline preload="metadata" data-autoplay
+             poster="assets/hero-poster.jpg"
+             aria-label="Overview walkthrough of the finished TeslaCart">
+        <source src="assets/hero.mp4" type="video/mp4">
+      </video>
+      <div class="vctl">
+        <button type="button" class="vctl-btn" data-act="back" aria-label="Back 10 seconds">&#8634;10</button>
+        <button type="button" class="vctl-btn vctl-toggle" data-act="toggle" aria-label="Pause">&#10074;&#10074;</button>
+        <button type="button" class="vctl-btn" data-act="fwd" aria-label="Forward 10 seconds">10&#8635;</button>
+        <input type="range" class="vctl-seek" min="0" max="1000" value="0" step="1"
+               aria-label="Seek through the video">
+        <span class="vctl-time">0:00 / 0:00</span>
+      </div>
+    </figure>
   </div>
 </header>
 
@@ -1112,6 +1120,83 @@ window.__onView = function (fn) {
 </script>
 
 <!-- ================================================================
+     HERO VIDEO CONTROLS
+     The hero keeps looping on its own, but this adds scrubbing, pause and
+     10-second skips for anyone who wants a second look at something.
+     ================================================================ -->
+<script>
+(function () {
+  var wrap = document.querySelector('.hero-player');
+  if (!wrap) return;
+  var v = wrap.querySelector('video');
+  var bar = wrap.querySelector('.vctl');
+  var toggle = wrap.querySelector('.vctl-toggle');
+  var seek = wrap.querySelector('.vctl-seek');
+  var time = wrap.querySelector('.vctl-time');
+  if (!v || !bar) return;
+
+  var PLAY = '\u25B6', PAUSE = '\u275A\u275A';
+  var scrubbing = false, holdTimer;
+
+  function fmt(s) {
+    if (!isFinite(s) || s < 0) s = 0;
+    var m = Math.floor(s / 60), r = Math.floor(s % 60);
+    return m + ':' + (r < 10 ? '0' : '') + r;
+  }
+  function paint() {
+    if (!isFinite(v.duration)) return;
+    if (!scrubbing) seek.value = Math.round((v.currentTime / v.duration) * 1000);
+    time.textContent = fmt(v.currentTime) + ' / ' + fmt(v.duration);
+  }
+  function setIcon() {
+    toggle.textContent = v.paused ? PLAY : PAUSE;
+    toggle.setAttribute('aria-label', v.paused ? 'Play' : 'Pause');
+  }
+  // keep the bar up briefly after any interaction, for touch and for scrubbing
+  function hold() {
+    bar.classList.add('is-held');
+    clearTimeout(holdTimer);
+    holdTimer = setTimeout(function () { bar.classList.remove('is-held'); }, 2500);
+  }
+
+  v.addEventListener('loadedmetadata', paint);
+  v.addEventListener('timeupdate', paint);
+  v.addEventListener('play', setIcon);
+  v.addEventListener('pause', setIcon);
+
+  bar.addEventListener('click', function (e) {
+    var act = e.target.getAttribute && e.target.getAttribute('data-act');
+    if (!act) return;
+    hold();
+    if (act === 'toggle') {
+      if (v.paused) { v.dataset.userPaused = '0'; v.play().catch(function () {}); }
+      else { v.dataset.userPaused = '1'; v.pause(); }
+    } else if (act === 'back' || act === 'fwd') {
+      var d = isFinite(v.duration) ? v.duration : 0;
+      var t = v.currentTime + (act === 'fwd' ? 10 : -10);
+      // it loops, so skipping past either end wraps instead of sticking
+      if (d > 0) { t = ((t % d) + d) % d; }
+      v.currentTime = Math.max(0, t);
+      paint();
+    }
+  });
+
+  seek.addEventListener('input', function () {
+    scrubbing = true; hold();
+    if (isFinite(v.duration)) {
+      v.currentTime = (seek.value / 1000) * v.duration;
+      time.textContent = fmt(v.currentTime) + ' / ' + fmt(v.duration);
+    }
+  });
+  seek.addEventListener('change', function () { scrubbing = false; });
+  wrap.addEventListener('touchstart', hold, { passive: true });
+
+  setIcon();
+  paint();
+})();
+</script>
+
+<!-- ================================================================
      LOOPING VIDEOS
      Every filmed subject on this page is a muted, looping video - there are no
      play buttons anywhere. They start when scrolled into view and pause when
@@ -1125,6 +1210,7 @@ window.__onView = function (fn) {
 
   window.__onView(function () {
     vids.forEach(function (v) {
+      if (v.dataset.userPaused === '1') return;      // someone hit pause; leave it alone
       if (window.__near(v, 200)) { if (v.paused) play(v); }
       else if (!v.paused) { v.pause(); }
     });

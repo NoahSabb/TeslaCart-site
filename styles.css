@@ -573,3 +573,93 @@ section[id], header[id] { scroll-margin-top: 68px; }
 @media (max-width: 760px) {
   .media-grid, .media-grid.cols-3 { grid-template-columns: 1fr; gap: 18px; }
 }
+
+/* ---------- hero video controls ---------- */
+
+.hero-player { position: relative; }
+
+.vctl {
+  position: absolute;
+  left: 10px; right: 10px; bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: rgba(8, 11, 16, 0.72);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+.hero-player:hover .vctl,
+.hero-player:focus-within .vctl,
+.vctl.is-held { opacity: 1; transform: none; pointer-events: auto; }
+
+.vctl-btn {
+  flex: none;
+  min-width: 42px;
+  height: 28px;
+  padding: 0 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.vctl-btn:hover { color: var(--accent); border-color: var(--accent-dim); }
+.vctl-toggle { min-width: 34px; font-size: 11px; }
+
+.vctl-seek {
+  flex: 1 1 auto;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.18);
+  cursor: pointer;
+  outline: none;
+}
+.vctl-seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: none;
+  cursor: pointer;
+}
+.vctl-seek::-moz-range-thumb {
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: none;
+  cursor: pointer;
+}
+.vctl-seek:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.vctl-time {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .vctl { gap: 7px; padding: 8px 9px; left: 6px; right: 6px; bottom: 6px; }
+  .vctl-time { display: none; }
+  .vctl-btn { min-width: 36px; font-size: 11px; }
+}
+
+/* touch devices have no hover, so keep the bar visible there */
+@media (hover: none) {
+  .vctl { opacity: 1; transform: none; pointer-events: auto; }
+}
