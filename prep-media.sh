@@ -22,10 +22,16 @@ cd "$(dirname "$0")"
 
 # Every subject that was filmed stays a video and autoplays on a loop.
 # Only genuine stills (CAD render, diagram export, social card) are images.
-SLOTS="hero:mp4 hero-poster:jpg cart-wide:mp4 \
+SLOTS="hero:mp4 hero-poster:jpg rc-driving:mp4 rc-dog:mp4 \
 electronics-closeup:mp4 detectnet:mp4 steering-test:mp4 brake-bench:mp4 \
 drive-test:mp4 power-distribution:mp4 reverse-test:mp4 social-card:jpg \
-throttle-box:mp4 camera-bringup:mp4 soldering:mp4"
+throttle-box:mp4 camera-bringup:mp4 soldering:mp4 \
+steering-demo:mp4 brake-demo:mp4 safety-override:mp4 reverse-demo:mp4 \
+subsystem-showcase:mp4 self-driving:mp4 \
+pcb-unboxing:mp4 pcb-assembly:mp4 pcb-design:mp4 \
+dash-mounting:mp4 \
+throttle-pot:mp4 throttle-underfloor:mp4 throttle-schematic:mp4 throttle-start:mp4 \
+soldering-wires:mp4 boards-flatlay:jpg pcb-layout:jpg power-dash:mp4 gps-antenna:mp4 camera-rail-build:mp4 cad-steering-1:mp4 cad-steering-2:mp4"
 
 MAXW=2000        # max image width in px
 VIDH="${VIDH:-1080}"   # max video height in px. Override: VIDH=720 ./prep-media.sh ...

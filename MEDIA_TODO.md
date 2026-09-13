@@ -1,59 +1,45 @@
-# Media still to capture
+# Media status
 
-V1 is complete — **there are no placeholders on the page**. Every section either
-has real media or has none, and nothing reads as unfinished. This file tracks
-what would make V2 better.
-
-Two things were removed from the page rather than faked, and two were filled
-with the closest real footage available. All of it is listed below.
+**Every file in `~/Desktop/teslacart-media/` is on the site — 28 videos and 2
+photos, nothing left over.** This file now tracks open questions and what would
+strengthen a future version.
 
 ---
 
-## 1. Removed from the page — no footage exists
+## One thing still unresolved
 
-These sections previously had a figure pointing at a file that was never shot.
-The figures are gone; the text still covers the work.
+**Phase 9 — which GPS module?** The phase text names a u-blox **NEO-F10N**, but
+`all the boards I used in the project layed out` clearly shows a SparkFun
+**NEO-M9N** in hand. The part number was left exactly as you wrote it — say
+which one is actually on the cart and it's a one-word fix.
 
-| Section | File it wanted | What to shoot |
-|---|---|---|
-| Phase 3 — Brake subsystem | `brake-bench.mp4` | The linear actuator driving the brake cable: extend/retract under serial command, and the Y-bridle pulling at the equalizer. This is a whole completed phase with zero media. |
-| Phase 6 — Power distribution | `power-distribution.mp4` | The trunk: master disconnect → main fuse → busbars → the individually fused branches. A slow pan across the finished bay would do it. |
-| Phase 7 — Forward / Reverse | `reverse-test.mp4` | The cart shifting direction under firmware control at a standstill, ideally with the relay board in frame. |
+## Worth upgrading later
 
-To put any of these back, drop the named file into `assets/` and re-add a
-figure — the markup pattern is the same as every other video on the page.
+- **`detectnet`** is phone footage of a monitor — visible moire and bezel. A
+  screen capture taken on the Jetson would look dramatically better and takes
+  seconds.
+- **`social-card.jpg`** (the link-preview image when the URL is shared) is a
+  frame grabbed from video. A real photograph of the cart would sharpen the
+  first impression.
+- **The cameras mounted on the cart** — the one shot the build log is explicitly
+  waiting on.
 
-## 2. Filled with stand-in footage — worth upgrading
+## Nice to have
 
-These are real, relevant clips, but not the shot the section actually wants.
-
-| Section | Using now | What would be better |
-|---|---|---|
-| Phase 2 — Steering | `steering-test.mp4` — the steering circuit (HBS86H driver, controller, motor cable) laid out before install | **The wheels actually turning.** Lock-to-lock and self-centering with the cart on stands, camera low and static. This is the single highest-value clip missing from the site. |
-| Phase 8 — Camera subsystem | `camera-bringup.mp4` — the six modules staged on the bench next to the Jetson | The six cameras **mounted on the rail** under the roof lip, and/or a screen capture of all six streams running at once. |
-| Software — detection | `detectnet.mp4` — phone footage of a monitor, with visible moire and bezel | A real screen capture taken on the Jetson. Ten seconds of work, and it will look dramatically better. |
-
-## 3. Nice to have
-
-- **A proper `cart-wide` photograph.** The overview currently uses video, which
-  is right for the page — but `assets/social-card.jpg` (the link-preview image
-  people see when the URL is shared) is a frame grabbed from video. A real
-  photo would sharpen the first impression.
-- **Detail stills** with no home yet, but worth having: the stepper and belt on
-  the steering column, the throttle intercept under the floor, the camera rail
-  under the roof lip, and the physical E-stop.
-- **The custom PCB.** `cad/Teslacart_kicad/` holds a real KiCad board with
-  gerbers, and the site never mentions it. `kicad-cli pcb render` produces a
-  clean 3D render with no photography needed.
+- The stepper and belt drive on the steering column, close up
+- The physical E-stop
+- A screen capture of all six camera streams running at once
+- The Jetson's view during an autonomous run (what the model actually sees)
 
 ---
 
-## How to add any of these
+## Adding more
 
 ```sh
-./prep-media.sh --list                              # what is filled vs. missing
+./prep-media.sh --list                              # filled vs. missing
 ./prep-media.sh ~/Desktop/clip.MOV brake-bench      # convert + install
 ```
 
-Videos are never trimmed unless you pass explicit start/duration. Use
-`VIDH=720 CRF=30` in front of the command to keep file size down.
+Videos are never trimmed unless you pass an explicit start/duration. Prefix with
+`VIDH=720 CRF=30` for a full-width clip, `VIDH=540 CRF=31` for one that sits in
+a side-by-side grid.

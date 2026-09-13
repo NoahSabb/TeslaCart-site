@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TeslaCart — a self-driving golf cart</title>
+<title>TeslaCart: a self-driving golf cart</title>
 <meta name="description" content="A 2015 Club Car golf cart retrofitted with drive-by-wire controls, a 360° camera rig, and an onboard neural network that learns to drive it. Solo full-stack build: custom electronics, embedded firmware, and imitation learning.">
-<meta property="og:title" content="TeslaCart — a self-driving golf cart">
+<meta property="og:title" content="TeslaCart: a self-driving golf cart">
 <meta property="og:description" content="Drive-by-wire retrofit + a fine-tuned vision-language-action model, built solo on a student budget.">
 <meta property="og:type" content="website">
 <!-- og:image must be a still image; every on-page subject that was filmed is a looping video -->
@@ -16,21 +16,42 @@
 <body>
 
 <!-- ================================================================
+     STICKY SECTION NAV
+     One scrolling page; these jump to each section and highlight whichever
+     one you're currently in.
+     ================================================================ -->
+<nav class="snav" aria-label="Sections">
+  <div class="snav-wrap">
+    <a class="snav-brand" href="#top">TeslaCart</a>
+    <div class="snav-tabs" role="list">
+      <a href="#overview"  data-sec="overview">Overview</a>
+      <a href="#hardware"  data-sec="hardware">Hardware</a>
+      <a href="#software"  data-sec="software">Software</a>
+      <a href="#build-log" data-sec="build-log">Build log</a>
+      <a href="#next"      data-sec="next">Roadmap</a>
+    </div>
+    <a class="snav-repo" href="https://github.com/NoahSabb/TeslaCart">Code</a>
+  </div>
+</nav>
+
+<!-- ================================================================
      1. HERO
      ================================================================ -->
-<header class="hero">
+<header class="hero" id="top">
   <div class="wrap">
     <p class="eyebrow">Solo build · Summer 2026</p>
-    <h1>TeslaCart <span class="thin">— a self-driving golf cart</span></h1>
+    <h1>TeslaCart<span class="thin">: a self-driving golf cart</span></h1>
     <p class="subhead">A 2015 Club Car golf cart retrofitted with drive-by-wire
       controls, a 360° camera rig, and an onboard neural network that learns
       to drive it.</p>
 
-    <figure class="media">
-      <video autoplay muted loop playsinline poster="assets/hero-poster.jpg">
-        <source src="assets/hero.mp4" type="video/mp4">
-      </video>
-    </figure>
+    <!-- Hero clip goes here once the cart overview video is shot.
+         Drop it in as assets/hero.mp4 and restore the figure below:
+         <figure class="media">
+           <video autoplay muted loop playsinline poster="assets/hero-poster.jpg">
+             <source src="assets/hero.mp4" type="video/mp4">
+           </video>
+         </figure> -->
   </div>
 </header>
 
@@ -44,22 +65,24 @@
     <p class="sec-label">01 · Overview</p>
     <h2>What this is</h2>
     <p class="lede">TeslaCart turns an ordinary electric golf cart into a
-      self-driving vehicle. Every physical control — steering, throttle,
-      braking, and direction — has been replaced with electronics that a small
+      self-driving vehicle. Every physical control (steering, throttle,
+      braking, and direction) has been replaced with electronics that a small
       onboard computer can operate, and the cart drives itself using an AI
       model trained on real driving demonstrations rather than hand-written
       rules.</p>
     <p>It's a full-stack build spanning custom electronics, embedded firmware,
-      and modern machine learning — done solo, on a student budget, with a
+      and modern machine learning, done solo, on a student budget, with a
       human in the driver's seat for every test. Everything is bolt-on and
       reversible: unplug the intercept harness and unbolt a couple of
       brackets, and the cart is stock again.</p>
 
     <figure class="media">
       <video muted loop playsinline preload="metadata" data-autoplay
-             aria-label="The TeslaCart — a 2015 Club Car Precedent with the camera rail and retrofit electronics visible">
-        <source src="assets/cart-wide.mp4" type="video/mp4">
+             aria-label="Walkthrough of the steering, brake, camera and GPS subsystems on the cart">
+        <source src="assets/subsystem-showcase.mp4" type="video/mp4">
       </video>
+      <figcaption>Every subsystem in one pass: the steering motor on the column,
+        the brake actuator under the floor, a camera on the roof rail, and the GPS.</figcaption>
     </figure>
     <hr class="sec-rule">
   </div>
@@ -75,38 +98,44 @@
 
     <h3>Platform</h3>
     <dl class="kv">
-      <div><dt>Vehicle</dt><dd>2015 Club Car Precedent i2 — 48&nbsp;V electric golf cart</dd></div>
+      <div><dt>Vehicle</dt><dd>2015 Club Car Precedent i2, 48&nbsp;V electric golf cart</dd></div>
       <div><dt>Stock drivetrain</dt><dd>MCOR4 throttle module → Curtis motor controller</dd></div>
-      <div><dt>Retrofit principle</dt><dd>Full drive-by-wire, with every control manually reversible — T-harness intercepts, no cutting into the stock loom</dd></div>
+      <div><dt>Retrofit principle</dt><dd>Full drive-by-wire, with every control manually reversible: T-harness intercepts, no cutting into the stock loom</dd></div>
     </dl>
 
-    <h3>Compute — a three-layer control stack</h3>
+    <h3>Compute: a three-layer control stack</h3>
     <p>The smart computer can't guarantee timing (it runs Linux); the dumb one
       can. So the deterministic layer sits between the smart layer and anything
       that can hurt someone, and each layer fails gracefully into the one
       below it.</p>
+    <p>The driving model is deliberately <em>not</em> in the safety path, which
+      is what makes its ~1&nbsp;Hz inference rate acceptable. Two rates run at
+      once: the model steers at about 1&nbsp;Hz, while deterministic detectors
+      run on their own thread at camera rate and can override it at any moment.
+      Steering tolerates roughly a second of staleness at 8&nbsp;to&nbsp;12&nbsp;mph
+      because lane position drifts over metres, not centimetres.</p>
 
     <div class="diagram" role="img" aria-label="Three-layer control stack: Jetson reasoning layer, Arduino control layer, hardware safety layer">
       <div class="d-box">
-        <span class="d-rate">10–15&nbsp;Hz</span>
-        <div class="d-title">Reasoning — NVIDIA Jetson Orin Nano Super</div>
-        <div class="d-sub">8&nbsp;GB, 67 TOPS · JetPack 6.2.1, booting from NVMe SSD · runs the vision + driving model</div>
+        <span class="d-rate">~1&nbsp;Hz</span>
+        <div class="d-title">Reasoning: NVIDIA Jetson Orin Nano Super</div>
+        <div class="d-sub">8&nbsp;GB, 67 TOPS · JetPack 6.2.1, booting from NVMe SSD · runs the driving model, with deterministic detectors alongside it at camera rate (30&nbsp;Hz+)</div>
       </div>
       <div class="d-arrow">↓ <span class="d-note">USB serial · heartbeat-monitored</span></div>
       <div class="d-box">
         <span class="d-rate">50&nbsp;Hz</span>
-        <div class="d-title">Control — Arduino Mega 2560</div>
+        <div class="d-title">Control: Arduino Mega 2560</div>
         <div class="d-sub">deterministic executor: drives the motors, enforces limits, holds the safety watchdog</div>
       </div>
       <div class="d-arrow">↓ <span class="d-note">relay coils · driver enables</span></div>
       <div class="d-box">
         <span class="d-rate">instant</span>
-        <div class="d-title">Safety — relays + physical E-stop</div>
+        <div class="d-title">Safety: relays + a physical cutoff switch</div>
         <div class="d-sub">hardware override, no software in the path · de-energized = 100% stock cart</div>
       </div>
       <p class="diagram-caption">The Arduino stays in the loop even under
         autonomy, so a watchdog can stop the cart independently of the Linux
-        side — lose the heartbeat and it zeroes throttle on its own authority.</p>
+        side. Lose the heartbeat and it zeroes throttle on its own authority.</p>
     </div>
 
     <h3>Drive-by-wire subsystems</h3>
@@ -115,18 +144,23 @@
         <h4>Steering
           <span class="status-inline st-done">motorized, calibrated, driven live</span></h4>
         <p>NEMA 34 closed-loop stepper (12&nbsp;N·m) with an HBS86H driver,
-          belt-driven to the steering column — 30T→80T HTD-5M, a 2.67:1
+          belt-driven to the steering column through a 30T→80T HTD-5M pair, a 2.67:1
           reduction (~32&nbsp;N·m at the column).</p>
-        <p>Position-controlled over a calibrated <code>±7000</code>-step
-          lock-to-lock range; self-centers on release. The closed-loop
-          encoder reads column angle even in manual driving, and the motor is
-          backdrivable when disabled — a human can always steer through it.</p>
+        <p>Position-controlled, and deliberately desensitised: a fully
+          deflected stick reaches <code>±2500</code> steps, and holding it
+          pinned lets the reachable limit creep out toward the
+          <code>±6000</code>-step hard limit for tight turns. Beyond that the
+          motor loses position, so the firmware never goes there. It
+          self-centers on release.</p>
+        <p>The closed-loop encoder reads column angle even in manual driving,
+          and the motor is backdrivable when disabled, so a human can always
+          steer through it.</p>
       </div>
       <div class="card">
         <h4>Throttle
           <span class="status-inline st-done">road-tested under load</span></h4>
         <p>A DS3502 digital potentiometer electrically impersonates the pedal
-          sensor and is swapped in via relays — the motor controller can't
+          sensor and is swapped in via relays. The motor controller can't
           tell the difference, and no servo touches the pedal.</p>
         <p>Fail-safe by construction: relays de-energized (Arduino off,
           crashed, or unpowered) reconnects the real pedal. Every command
@@ -148,61 +182,154 @@
         <h4>Forward / Reverse
           <span class="status-inline st-done">harness traced, relays wired, reverse in firmware</span></h4>
         <p>The cart's direction-select signals are intercepted with relays so
-          direction can be set in firmware — same reversible T-harness
+          direction can be set in firmware, using the same reversible T-harness
           pattern as the throttle.</p>
         <p>Firmware only ever switches direction at a verified standstill.
-          Harness meter-tested, both relays wired, reverse in firmware — see
+          Harness meter-tested, both relays wired, reverse in firmware. See
           the build log.</p>
       </div>
     </div>
 
-    <figure class="media">
-      <video muted loop playsinline preload="metadata" data-autoplay
-             aria-label="Timelapse of the drive-by-wire boards being soldered, from bare perfboard to finished assembly">
-        <source src="assets/soldering.mp4" type="video/mp4">
-      </video>
-      <figcaption>Building the boards — three soldering sessions back to back, from
-        bare perfboard to the finished drive-by-wire assemblies.</figcaption>
-    </figure>
+    <div class="media-grid">
+      <figure class="media">
+        <video muted loop playsinline preload="metadata" data-autoplay
+               aria-label="Timelapse of the drive-by-wire boards being soldered, from bare perfboard to finished assembly">
+          <source src="assets/soldering.mp4" type="video/mp4">
+        </video>
+        <figcaption>Three soldering sessions back to back, from bare perfboard to finished
+          drive-by-wire assemblies.</figcaption>
+      </figure>
+      <figure class="media">
+        <video muted loop playsinline preload="metadata" data-autoplay
+               aria-label="Close-up of wires being soldered and tinned">
+          <source src="assets/soldering-wires.mp4" type="video/mp4">
+        </video>
+        <figcaption>Tinning and joining the harness leads.</figcaption>
+      </figure>
+      <figure class="media">
+        <video muted loop playsinline preload="metadata" data-autoplay
+               aria-label="Mounting the Arduino onto the dash board with standoffs">
+          <source src="assets/dash-mounting.mp4" type="video/mp4">
+        </video>
+        <figcaption>Standing the controller off its mounting board.</figcaption>
+      </figure>
+      <figure class="media">
+        <video muted loop playsinline preload="metadata" data-autoplay
+               aria-label="Multimeter reading the digital potentiometer sweeping its output voltage">
+          <source src="assets/throttle-pot.mp4" type="video/mp4">
+        </video>
+        <figcaption>Bench-testing the digital pot that stands in for the pedal.</figcaption>
+      </figure>
+    </div>
+
+    <h3>The custom control board</h3>
+    <p>The prototype lived on perfboard; the production version is a
+      purpose-built PCB designed in KiCad and fabricated, carrying the Arduino
+      Mega, the digital potentiometer that impersonates the throttle pedal, the
+      relay bank, and the motor-driver heatsink on one board. It replaces a mat
+      of jumper wires with something that can be unplugged and reseated without
+      re-tracing every connection.</p>
+
+    <div class="media-grid cols-3">
+      <figure class="media">
+        <video muted loop playsinline preload="metadata" data-autoplay
+               aria-label="The PCB layout being zoomed out from in the design tool">
+          <source src="assets/pcb-design.mp4" type="video/mp4">
+        </video>
+        <figcaption>Laying out the board.</figcaption>
+      </figure>
+      <figure class="media">
+        <video muted loop playsinline preload="metadata" data-autoplay
+               aria-label="Unboxing the fabricated printed circuit board">
+          <source src="assets/pcb-unboxing.mp4" type="video/mp4">
+        </video>
+        <figcaption>The fabricated board arriving.</figcaption>
+      </figure>
+      <figure class="media">
+        <video muted loop playsinline preload="metadata" data-autoplay
+               aria-label="The assembled control board with relay bank and motor driver fitted">
+          <source src="assets/pcb-assembly.mp4" type="video/mp4">
+        </video>
+        <figcaption>Populated and stacked on the Mega.</figcaption>
+      </figure>
+    </div>
+
+    <div class="media-grid">
+      <figure class="media">
+        <img src="assets/boards-flatlay.jpg" alt="Flat lay of every board in the project: digital potentiometer, GPS module, Arduino Mega, and the bare custom PCB">
+        <figcaption>Every board in the stack: DS3502 digital pot, SparkFun NEO-F10N GPS,
+          Arduino Mega, and the bare custom PCB.</figcaption>
+      </figure>
+      <figure class="media">
+        <img src="assets/pcb-layout.jpg" alt="The assembled control board with motor driver heatsink, digital potentiometer and four-channel relay board">
+        <figcaption>Assembled: motor-driver heatsink, digital pot, and the
+          four-channel relay bank.</figcaption>
+      </figure>
+    </div>
 
     <h3>The steering assembly, in 3D</h3>
-    <p>The full steering assembly — motor mount, bracketry and column hardware
-      together. Drag to spin it, scroll to zoom; this is the real CAD, loaded
-      straight from the STL in the build repo.</p>
+    <p>Nothing about the mount was off the shelf — it had to locate a NEMA&nbsp;34
+      against a steering column that was never meant to carry one, hold the belt
+      at the right tension, and still bolt to existing holes. It was modelled
+      from measurements of the cart:</p>
+
+    <div class="media-grid">
+      <figure class="media">
+        <video muted loop playsinline preload="metadata" data-autoplay
+               aria-label="Timelapse of the steering mount being modelled in CAD, part one">
+          <source src="assets/cad-steering-1.mp4" type="video/mp4">
+        </video>
+        <figcaption>Modelling the mount, part one.</figcaption>
+      </figure>
+      <figure class="media">
+        <video muted loop playsinline preload="metadata" data-autoplay
+               aria-label="Timelapse of the steering mount being modelled in CAD, part two">
+          <source src="assets/cad-steering-2.mp4" type="video/mp4">
+        </video>
+        <figcaption>Part two, through to the finished body.</figcaption>
+      </figure>
+    </div>
+
+    <p>And here is what came out of it — drag to spin, scroll to zoom. This is the
+      real CAD, loaded straight from the STL in the build repo.</p>
     <figure class="media">
       <div class="m3d" data-stl="assets/steering-full.stl" data-rotate="-90,0,0"
-           data-label="Full steering assembly — drag to spin"></div>
-      <figcaption>Full steering assembly — shown from the source STL.</figcaption>
+           data-label="Full steering assembly, drag to spin"></div>
+      <figcaption>Full steering assembly, shown from the source STL.</figcaption>
     </figure>
 
-    <h3>Cameras — 360° vision</h3>
+    <h3>Cameras: 360° vision</h3>
     <ul>
-      <li><strong>6× Innomaker U20CAM-1080P</strong> USB cameras — 1080p @
+      <li><strong>6× Innomaker U20CAM-1080P</strong> USB cameras, 1080p @
         30&nbsp;fps, MJPEG, native UVC, ~130° diagonal field of view each.</li>
       <li><strong>Surround layout:</strong> front-center, two front corners
-        (≈±60°), two rear corners (≈±120°), and rear-center — to be mounted on
-        PVC rails under the roof lip with cabling routed inside the rail.
-        Housings are printed; the rail is not on the cart yet.</li>
-      <li><strong>All six stream at once — verified.</strong> MJPEG compression
+        (≈±60°), two rear corners (≈±120°), and rear-center, mounted on PVC
+        rails under the roof lip with cabling routed inside the rail.</li>
+      <li><strong>All six stream at once, verified.</strong> MJPEG compression
         is necessary but not sufficient: these cameras over-declare their USB
         bandwidth, so stock Linux only lets two stream per controller. A
         patched <code>uvcvideo</code> kernel driver that clamps the reservation,
         plus splitting the hubs across two USB root ports, gets all six running
-        at 1080p30 (20–27&nbsp;fps each, zero dropped frames). The driving
-        model consumes up to three streams per timestep, selected by driving
-        direction — front cameras going forward, rear cameras in reverse.</li>
+        at 1080p30 (20–27&nbsp;fps each, zero dropped frames).</li>
+      <li><strong>All six views go into the model.</strong> Nothing in SmolVLA
+        caps the camera count; the three cameras in the pretrained config are
+        the tabletop rig it was fine-tuned on, not an architectural limit.
+        Measured on the Jetson, six views cost only ~240&nbsp;ms more than one,
+        which is less than dropping five denoising steps would buy back. Three
+        cameras face forward for driving, three face rearward for reverse and
+        for triggered maneuvers like backing in.</li>
       <li>Cameras are powered from the cart through powered USB hubs (fed by
         a wide-input DC-DC buck converter off the battery busbars), so camera
-        load and heat stay off the Jetson — its port carries data only.</li>
+        load and heat stay off the Jetson, whose port carries data only.</li>
     </ul>
 
     <h3>The camera setup, in 3D</h3>
-    <p>The full camera setup — housings and rail hardware together. Same deal —
+    <p>The full camera setup: housings and rail hardware together. Same deal,
       drag to spin, scroll to zoom.</p>
     <figure class="media">
       <div class="m3d" data-stl="assets/camera-full.stl" data-rotate="-90,0,0"
-           data-label="Full camera setup — drag to spin"></div>
-      <figcaption>Full camera setup — shown from the source STL.</figcaption>
+           data-label="Full camera setup, drag to spin"></div>
+      <figcaption>Full camera setup, shown from the source STL.</figcaption>
     </figure>
 
     <h3>Power distribution</h3>
@@ -219,7 +346,7 @@
       <div class="dio" data-src="assets/wiring-diagram.drawio">
         <div class="dio-status">loading the wiring diagram&hellip;</div>
       </div>
-      <figcaption>Full-system wiring diagram — every component drawn to scale on
+      <figcaption>Full-system wiring diagram: every component drawn to scale on
         the cart and wired as built. Scroll to zoom, drag to pan; use the
         fullscreen button for a closer look.</figcaption>
     </figure>
@@ -244,13 +371,19 @@
 
     <h3>The model</h3>
     <p>The driver is a <strong>pretrained vision-language-action (VLA) model,
-      fine-tuned</strong> on the cart's own driving data — not trained from
-      scratch, and not a hand-coded rule system. The base model,
+      fine-tuned</strong> on the cart's own driving data, not trained from
+      scratch and not a hand-coded rule system. The base model,
       <strong>SmolVLA</strong> (~450M parameters, from the Hugging&nbsp;Face
       LeRobot ecosystem), already understands roads, scenes, and obstacles;
-      fine-tuning teaches it <em>this cart's specific controls</em>. For
-      deployment it's exported through ONNX to TensorRT FP16, targeting
-      ≥10&nbsp;Hz end-to-end on the Jetson.</p>
+      fine-tuning teaches it <em>this cart's specific controls</em>.</p>
+    <p>Inference was benchmarked on the Jetson rather than estimated. At the
+      chosen configuration (six views, 512×512, ten denoising steps) one pass
+      takes <strong>~1064&nbsp;ms in eager PyTorch</strong>, just under
+      1&nbsp;Hz, using under 1&nbsp;GB of the 8&nbsp;GB. Denoising steps
+      dominate that number at roughly 69&nbsp;ms each; camera count barely moves
+      it, which is why all six stay in. Cutting the denoising steps and
+      exporting through TensorRT FP16 are the levers if it needs to go
+      faster.</p>
 
     <h3>The autonomy loop</h3>
     <div class="diagram" role="img" aria-label="Data flow: cameras to Jetson to mapping layer to Arduino to actuators">
@@ -260,17 +393,17 @@
       </div>
       <div class="d-arrow">↓</div>
       <div class="d-box">
-        <div class="d-title">Jetson — SmolVLA + safety detector</div>
+        <div class="d-title">Jetson: SmolVLA + safety detector</div>
         <div class="d-sub">outputs normalized actions: steering, throttle, brake</div>
       </div>
       <div class="d-arrow">↓</div>
       <div class="d-box">
         <div class="d-title">Mapping layer</div>
-        <div class="d-sub">normalized outputs → hardware terms: steering steps (±7000), throttle pot value, brake position, direction relay state</div>
+        <div class="d-sub">normalized outputs → hardware terms: steering steps (±6000 hard limit), throttle pot value, brake fader target, direction relay state</div>
       </div>
       <div class="d-arrow">↓ <span class="d-note">USB serial @ 115200</span></div>
       <div class="d-box">
-        <div class="d-title">Arduino Mega — ~50&nbsp;Hz executor</div>
+        <div class="d-title">Arduino Mega: ~50&nbsp;Hz executor</div>
         <div class="d-sub">clamps, ramps, and applies commands · watchdog zeroes throttle if commands stop</div>
       </div>
       <div class="d-arrow">↓</div>
@@ -280,29 +413,43 @@
       </div>
     </div>
     <p>The mapping layer is the <strong>exact same code path already used for
-      manual Xbox-controller driving</strong> — the model simply replaces the
+      manual Xbox-controller driving</strong>. The model simply replaces the
       joystick. That means the autonomy stack inherits a control path that has
       already been proven by hours of human driving.</p>
 
     <h3>Safety override layer</h3>
     <p>A dedicated person/obstacle detector runs alongside the driving model
-      and can override it to force a brake — a hard, deterministic rule
+      and can override it to force a brake, a hard deterministic rule
       sitting above the probabilistic driving policy. It's built on the object
       detection already running on the Jetson (SSD-MobileNet via TensorRT,
       validated with live bounding boxes).</p>
     <p><strong>Defense in depth:</strong> learned model → explicit detector →
-      Arduino watchdog → human safety driver → physical E-stop. No single
-      layer is trusted alone.</p>
+      Arduino watchdog → human safety driver → a physical cutoff switch that
+      hands the cart back to full manual control. No single layer is trusted
+      alone.</p>
+
+    <figure class="media">
+      <video muted loop playsinline preload="metadata" data-autoplay
+             aria-label="Safety override test: a person steps into the cart's path and the cart brakes">
+        <source src="assets/safety-override.mp4" type="video/mp4">
+      </video>
+      <figcaption>The override, tested for real: a person steps into the cart's
+        path and the detector forces a brake, over the top of whatever the
+        driving model wanted to do.</figcaption>
+    </figure>
 
     <h3>How the pieces talk</h3>
     <ul>
       <li><strong>Jetson ↔ Arduino:</strong> USB serial with a compact
-        line-based protocol — e.g. <code>S&lt;steps&gt;</code> for an absolute
-        steering target and <code>T&lt;level&gt;</code> for throttle, streamed
-        ~50×/second. No message for a few hundred milliseconds → throttle goes
-        to zero automatically.</li>
+        line-based protocol, one letter per channel, streamed ~50×/second.
+        <code>S</code> carries the steering stick position, <code>T</code>
+        throttle, <code>B</code> the brake target, <code>D</code> direction and
+        <code>C</code> which side holds control. The Arduino talks back with
+        <code>F</code>, the measured brake-fader reading. Go 400&nbsp;ms with no
+        message and throttle drops to zero with control handed back to the stock
+        rocker.</li>
       <li><strong>Xbox controller ↔ compute:</strong> used for manual driving
-        <em>and</em> data collection — over Bluetooth to the Jetson, or USB to
+        <em>and</em> data collection, over Bluetooth to the Jetson or USB to
         a laptop during bring-up. Stick input is expo-shaped (softer near
         center) for precise steering.</li>
     </ul>
@@ -311,29 +458,30 @@
     <ul>
       <li>Data is collected by <strong>driving the cart manually via the
         controller</strong>. The controller inputs <em>are</em> the training
-        labels — the model learns to reproduce the commands the human issued.</li>
+        labels: the model learns to reproduce the commands the human issued.</li>
       <li>Each logged record: <code>timestamp, 6 camera frames, commanded
         steering / throttle / direction</code> at 10–15&nbsp;Hz, converted
         offline to the LeRobot dataset format. Brake logs the <em>actual</em>
-        potentiometer position — continuous feedback, not just the command.</li>
+        potentiometer position, continuous feedback rather than just the command.</li>
       <li><strong>Every episode carries a language instruction</strong>, because
-        the model is language-conditioned: a closed vocabulary — <em>follow the
+        the model is language-conditioned: a closed vocabulary (<em>follow the
         road</em>, <em>turn left at the intersection</em>, <em>turn right at the
-        intersection</em> — chosen on the controller before each 15–30&nbsp;s
+        intersection</em>) chosen on the controller before each 15–30&nbsp;s
         episode, so the label is captured at record time, not reconstructed
         later. At drive time the same strings come from a deterministic routing
         layer (GPS snapped to an OpenStreetMap road graph); the model never sees
         a map, and GPS stays out of its inputs so it can't memorize
         intersections by coordinate.</li>
-      <li>Target: roughly <strong>5–10 hours of clean driving</strong> (~20–30
-        short sessions), including deliberate <strong>recovery
-        episodes</strong> — drift off-center, then correct — to teach the
-        model how to recover. That's the main defense against distribution
+      <li>Target: roughly <strong>5–10 hours of clean driving</strong>, with
+        50 to 100 episodes per maneuver as the floor and 100+ for turns, spread
+        over as many different intersections as the neighborhood offers. That
+        includes deliberate <strong>recovery episodes</strong> (drift
+        off-center, then correct) to teach the model how to recover. That's the main defense against distribution
         shift, extended after deployment with DAgger-style iteration: log
         interventions, add correction data, re-fine-tune.</li>
       <li>Reverse is left out of the initial action space (rare, low-data, and
-        mixing a discrete flip into continuous control hurts learning) —
-        logged now, added later.</li>
+        mixing a discrete flip into continuous control hurts learning). It is
+        logged now and added later.</li>
     </ul>
 
     <figure class="media">
@@ -341,7 +489,7 @@
              aria-label="Live object detection on the Jetson with real-time bounding boxes">
         <source src="assets/detectnet.mp4" type="video/mp4">
       </video>
-      <figcaption>SSD-MobileNet running under TensorRT on the Jetson — the base of the safety-override detector.</figcaption>
+      <figcaption>SSD-MobileNet running under TensorRT on the Jetson: the base of the safety-override detector.</figcaption>
     </figure>
     <hr class="sec-rule">
   </div>
@@ -354,18 +502,18 @@
   <div class="wrap">
     <p class="sec-label">04 · Build log</p>
     <h2>Phase by phase</h2>
-    <p>Honest status, phase by phase — what's proven, what's in flight, and
-      what hasn't started. <span class="tag tag--done">✅ Complete</span>
-      <span class="tag tag--wip">🟡 In progress</span>
+    <p>Honest status, phase by phase: what's proven and what hasn't started.
+      Every subsystem below is built and running on the cart; the one open phase
+      is marked as such. <span class="tag tag--done">✅ Complete</span>
       <span class="tag tag--plan">⬜ Planned</span></p>
 
     <ol class="timeline">
       <li class="phase is-done">
         <span class="phase-date">July 11–14, 2026</span>
-        <h3>Phase 1 — Throttle drive-by-wire <span class="tag tag--done">✅ Complete</span></h3>
+        <h3>Phase 1: Throttle drive-by-wire <span class="tag tag--done">✅ Complete</span></h3>
         <p>Digital-potentiometer throttle intercept of the MCOR module,
           relay-switched between the real pedal and the computer. Bench-tested,
-          then <strong>road-tested on the cart under load</strong> — from a
+          then <strong>road-tested on the cart under load</strong>, from a
           25% crawl to full throttle. Includes a serial watchdog that zeroes
           throttle on signal loss.</p>
         <figure class="media">
@@ -373,97 +521,185 @@
                  aria-label="The throttle intercept circuit in its test enclosure">
             <source src="assets/throttle-box.mp4" type="video/mp4">
           </video>
-          <figcaption>The throttle intercept in its test box — Arduino Mega, relay board and the digital-pot circuit that impersonates the pedal.</figcaption>
+          <figcaption>The throttle intercept in its test box: Arduino Mega, relay board and the digital-pot circuit that impersonates the pedal.</figcaption>
         </figure>
+
+        <div class="media-grid">
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="Early work on the throttle board">
+              <source src="assets/throttle-start.mp4" type="video/mp4">
+            </video>
+            <figcaption>Where it started.</figcaption>
+          </figure>
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="Drawing the throttle intercept schematic on a whiteboard">
+              <source src="assets/throttle-schematic.mp4" type="video/mp4">
+            </video>
+            <figcaption>Working out the intercept on the whiteboard.</figcaption>
+          </figure>
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="Driving the cart forward using only the spacebar on a laptop">
+              <source src="assets/drive-test.mp4" type="video/mp4">
+            </video>
+            <figcaption>Driving the cart on the spacebar alone: no pedal, no servo,
+              just the intercept taking commands.</figcaption>
+          </figure>
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="The throttle circuit installed under the cart floor, plugged into the pedal">
+              <source src="assets/throttle-underfloor.mp4" type="video/mp4">
+            </video>
+            <figcaption>Installed under the floor, spliced into the pedal.</figcaption>
+          </figure>
+        </div>
       </li>
 
       <li class="phase is-done">
         <span class="phase-date">July–August 2026</span>
-        <h3>Phase 2 — Steering drive-by-wire <span class="tag tag--done">✅ Complete</span></h3>
+        <h3>Phase 2: Steering drive-by-wire <span class="tag tag--done">✅ Complete</span></h3>
         <p>Closed-loop stepper + belt drive to the steering column.
-          Lock-to-lock calibrated (usable range ±7000 steps). Driven live from
-          an Xbox controller with self-centering, absolute-position
+          Lock-to-lock calibrated: ±6000 steps is the hard limit before the
+          motor loses position, and normal stick deflection is deliberately
+          held to ±2500 so the steering isn't twitchy at speed. Driven live
+          from an Xbox controller with self-centering, absolute-position
           steering.</p>
-        <figure class="media">
-          <video muted loop playsinline preload="metadata" data-autoplay>
-            <source src="assets/steering-test.mp4" type="video/mp4">
-          </video>
-          <figcaption>The steering circuit — HBS86H driver, controller and motor cable — laid out before it went on the cart.</figcaption>
-        </figure>
+        <div class="media-grid">
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="Close-up of the steering wheel and front tires turning under motor control">
+              <source src="assets/steering-demo.mp4" type="video/mp4">
+            </video>
+            <figcaption>Driving the column: the wheel and the front tires turning
+              under motor control.</figcaption>
+          </figure>
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="The steering circuit laid out before installation">
+              <source src="assets/steering-test.mp4" type="video/mp4">
+            </video>
+            <figcaption>The HBS86H driver and motor cable, before they went on
+              the cart.</figcaption>
+          </figure>
+        </div>
       </li>
 
       <li class="phase is-done">
         <span class="phase-date">July 26–30, 2026</span>
-        <h3>Phase 3 — Brake subsystem <span class="tag tag--done">✅ Complete</span></h3>
+        <h3>Phase 3: Brake subsystem <span class="tag tag--done">✅ Complete</span></h3>
         <p>Linear-actuator brake with a tension-only cable bridle and
           continuous position feedback. <strong>Full chain bench-tested
-          successfully</strong> — extend/retract with variable speed over serial;
-          the self-locking actuator holds position with no holding current —
-          and now <strong>mounted on the cart</strong>, pulling the brake cable
-          through the Y-bridle at the equalizer. Because the linkage is
-          tension-only, the pedal still overrides it and a snapped cable
-          releases the brakes. Reporting the fader position back to the Jetson
-          (brake telemetry) is the next step — see the roadmap.</p>
+          successfully</strong>, extending and retracting at variable speed over
+          serial, with the self-locking actuator holding position at no holding
+          current. It is now <strong>mounted on the cart</strong>, pulling the
+          brake cable through the Y-bridle at the equalizer. Because the linkage
+          is tension-only, the pedal still overrides it and a snapped cable
+          releases the brakes.</p>
+        <p>The brake runs closed-loop on its slide fader: the trigger sets a
+          target reading and the actuator drives until it lands inside a
+          deadband, with a hard floor enforced no matter what is commanded. The
+          Arduino reports that fader reading back to the Jetson, so logged brake
+          labels are the measured position rather than the command.</p>
+        <figure class="media">
+          <video muted loop playsinline preload="metadata" data-autoplay
+                 aria-label="Close-up of the linear actuator pulling the brake cable on the cart">
+            <source src="assets/brake-demo.mp4" type="video/mp4">
+          </video>
+          <figcaption>The actuator on the cart, pulling the brake cable through the
+            tension-only bridle at the equalizer.</figcaption>
+        </figure>
       </li>
 
       <li class="phase is-done">
         <span class="phase-date">July 2026</span>
-        <h3>Phase 4 — Compute bring-up <span class="tag tag--done">✅ Complete</span></h3>
+        <h3>Phase 4: Compute bring-up <span class="tag tag--done">✅ Complete</span></h3>
         <p>Jetson Orin Nano set up on JetPack 6.2.1, root filesystem migrated
           from microSD to the NVMe SSD, and live object detection running via
-          TensorRT (SSD-MobileNet with real-time bounding boxes) — proving the
+          TensorRT (SSD-MobileNet with real-time bounding boxes), proving the
           capture → neural net → render loop the driving model will use. Since
           then it runs headless: Tailscale + key-based SSH, no monitor or
           keyboard needed.</p>
       </li>
 
+
       <li class="phase is-done">
         <span class="phase-date">August 2026</span>
-        <h3>Phase 5 — Manual controller driving <span class="tag tag--done">✅ Complete (throttle + steering)</span></h3>
-        <p>Xbox-controller drive integrating throttle + steering through one
-          firmware path — absolute-position steering on the left stick with
-          expo-shaped sensitivity, gradual throttle on the right trigger,
-          streamed at ~50&nbsp;Hz with a fail-safe that zeroes throttle if the
-          link drops. Reverse was added afterwards — see Phase&nbsp;7.</p>
+        <h3>Phase 5: Power distribution <span class="tag tag--done">✅ Complete</span></h3>
+        <p>The whole trunk is <strong>wired on the cart</strong>: 48&nbsp;V pack →
+          master disconnect switch → main fuse → positive/negative busbars →
+          individually fused branches, with separate DC-DC converters so the
+          Jetson, the brake driver, and the camera hubs each get their own
+          isolated supply. The cameras now run off the cart rather than wall bricks.
+          Every connection is documented pin-for-pin in the build repo's wiring
+          reference, and the negative busbar is the single ground star that
+          every subsystem lands on.</p>
         <figure class="media">
-          <video muted loop playsinline preload="metadata" data-autoplay>
-            <source src="assets/drive-test.mp4" type="video/mp4">
+          <video muted loop playsinline preload="metadata" data-autoplay
+                 aria-label="The finished dash showing the power distribution: busbars, fusing and converters">
+            <source src="assets/power-dash.mp4" type="video/mp4">
           </video>
-          <figcaption>Controller-driven test on the ground.</figcaption>
+          <figcaption>The finished trunk on the dash: busbars, fused branches and the
+            isolated DC-DC supplies, all landing on one panel.</figcaption>
         </figure>
       </li>
 
       <li class="phase is-done">
         <span class="phase-date">August 2026</span>
-        <h3>Phase 6 — Power distribution <span class="tag tag--done">✅ Complete</span></h3>
-        <p>The whole trunk is <strong>wired on the cart</strong>: 48&nbsp;V pack →
-          master disconnect switch → main fuse → positive/negative busbars →
-          individually fused branches, with separate DC-DC converters so the
-          Jetson, the brake driver, and the camera hubs each get their own
-          isolated supply — the cameras now run off the cart, not wall bricks.
-          Every connection is documented pin-for-pin in the build repo's wiring
-          reference, and the negative busbar is the single ground star that
-          every subsystem lands on.</p>
-      </li>
-
-      <li class="phase is-done">
-        <span class="phase-date">August 2026</span>
-        <h3>Phase 7 — Forward / Reverse <span class="tag tag--done">✅ Complete</span></h3>
-        <p>The 3-wire direction harness was <strong>meter-tested on the cart</strong>
-          — forward, reverse, and common identified, polarity confirmed — and
+        <h3>Phase 6: Forward / Reverse <span class="tag tag--done">✅ Complete</span></h3>
+        <p>The 3-wire direction harness was <strong>meter-tested on the cart</strong>,
+          identifying forward, reverse and common and confirming polarity, and
           the two relays wired: one hands control from the real rocker switch
           to the computer, the other selects direction. De-energized, the stock
           rocker is in charge, same fail-safe pattern as the throttle. Reverse
           is in firmware and only ever switches at a verified standstill. No
-          new hardware — existing relay channels and Arduino pins.</p>
+          new hardware, just existing relay channels and Arduino pins.</p>
+        <figure class="media">
+          <video muted loop playsinline preload="metadata" data-autoplay
+                 aria-label="The cart switching from reverse to forward under firmware control">
+            <source src="assets/reverse-demo.mp4" type="video/mp4">
+          </video>
+          <figcaption>Direction switching under firmware control: reverse, stop,
+            forward, with the stock rocker still in charge when de-energized.</figcaption>
+        </figure>
+      </li>
+
+      <li class="phase is-done">
+        <span class="phase-date">August 2026</span>
+        <h3>Phase 7: Remote control <span class="tag tag--done">✅ Complete</span></h3>
+        <p>With throttle, steering, braking and direction all under firmware
+          control, the cart could be driven with <strong>nobody in it</strong>,
+          the operator standing outside and the seat empty. This is the step that
+          proves every subsystem works together rather than one at a time, and
+          it's the configuration the training data was later collected in: the
+          controller inputs <em>are</em> the labels, so what the model learns to
+          reproduce is exactly what was commanded here.</p>
+        <div class="media-grid">
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="The cart driving down the street under remote control with nobody in it">
+              <source src="assets/rc-driving.mp4" type="video/mp4">
+            </video>
+            <figcaption>Driving away with an empty seat: throttle, steering and
+              direction all commanded remotely.</figcaption>
+          </figure>
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="The cart driving under remote control with a dog sitting in the passenger seat">
+              <source src="assets/rc-dog.mp4" type="video/mp4">
+            </video>
+            <figcaption>The first passenger.</figcaption>
+          </figure>
+        </div>
       </li>
 
       <li class="phase is-done">
         <span class="phase-date">August 23–30, 2026</span>
-        <h3>Phase 8 — Camera subsystem <span class="tag tag--done">✅ Six streams validated</span> <span class="tag tag--wip">🟡 not yet mounted</span></h3>
+        <h3>Phase 8: Camera subsystem <span class="tag tag--done">✅ Complete</span></h3>
         <p>The gating test <strong>passed: all six cameras stream 1080p30 MJPEG
-          concurrently on the Jetson</strong> — 20–27&nbsp;fps each, zero failed
-          grabs, zero corrupt frames. Getting there took real driver work. Out
+          concurrently on the Jetson</strong>, 20–27&nbsp;fps each, with zero failed
+          grabs and zero corrupt frames. Getting there took real driver work. Out
           of the box only <em>two</em> cameras would stream: they declare far
           more USB bandwidth than MJPEG actually needs, and the kernel reserves
           what they ask for. Root-caused it, then built and installed a
@@ -472,55 +708,93 @@
           root ports for a second bandwidth budget. Cameras are identified by
           stable port paths (never <code>/dev/videoN</code>, which shuffles on
           every reboot), and exposure / line-frequency settings are applied
-          automatically at boot by a systemd service — verified across a real
-          reboot, no manual step. Housings are printed; mounting the rail on the
-          cart and retuning exposure outdoors are what's left.</p>
+          automatically at boot by a systemd service, verified across a real
+          reboot with no manual step. Housings are printed, the rail is mounted on the cart, and
+          exposure is retuned for outdoor light.</p>
+        <div class="media-grid">
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="Bench setup for the first six-camera test on the Jetson">
+              <source src="assets/camera-bringup.mp4" type="video/mp4">
+            </video>
+            <figcaption>All six modules staged for the first run.</figcaption>
+          </figure>
+          <figure class="media">
+            <video muted loop playsinline preload="metadata" data-autoplay
+                   aria-label="Building the camera rail: fitting modules into the printed housings, then the finished rail with cabling routed">
+              <source src="assets/camera-rail-build.mp4" type="video/mp4">
+            </video>
+            <figcaption>Building the rail: modules into the printed housings, then
+              the finished run with cabling inside.</figcaption>
+          </figure>
+        </div>
+      </li>
+
+      <li class="phase is-done">
+        <span class="phase-date">August 30, 2026</span>
+        <h3>Phase 9: GPS &amp; routing layer <span class="tag tag--done">✅ Complete</span></h3>
+        <p>Receiver and antenna <strong>installed and working</strong>: a SparkFun
+          NEO-F10N (u-blox F10 series, dual-band L1/L5 with multipath mitigation,
+          ~1.5&nbsp;m accuracy) paired with a multi-band active antenna. The
+          antenna deliberately cost more than the receiver, because the antenna
+          decides how many satellites actually get heard, and an L1-only one
+          would have wasted the board's L5 capability. First outdoor fix came in
+          at <strong>12 satellites, HDOP 0.75</strong>.</p>
+        <p>Getting there was mostly operating-system archaeology: the first USB
+          cable turned out to be charge-only, JetPack ships without the
+          <code>ch341</code> kernel module the receiver's USB-serial bridge needs
+          (built from source and installed), and Ubuntu's braille-display daemon
+          quietly claims CH340 devices until it is removed. The receiver is
+          addressed by its stable <code>/dev/serial/by-id/</code> path, never
+          <code>ttyUSB0</code>, and the launcher filters that same path out of
+          its Arduino auto-detect so the drive loop can never open the GPS by
+          mistake.</p>
+        <p>Its job is deliberately narrow: stamp logged frames with position and
+          speed, and feed a <strong>deterministic routing layer</strong> that
+          snaps to an OpenStreetMap road graph and publishes a single instruction
+          string to the driving model. GPS stays out of the model's inputs
+          entirely. Enabling the L5 band over UBX and finalizing the antenna
+          mount on the cart are the two open items.</p>
         <figure class="media">
           <video muted loop playsinline preload="metadata" data-autoplay
-                 aria-label="Bench setup for the first six-camera test on the Jetson">
-            <source src="assets/camera-bringup.mp4" type="video/mp4">
+                 aria-label="The GPS antenna mounted on the cart">
+            <source src="assets/gps-antenna.mp4" type="video/mp4">
           </video>
-          <figcaption>Bench setup for the first six-camera run — all six U20CAM modules staged next to the Jetson.</figcaption>
+          <figcaption>The active antenna on the cart: the half that
+            decides how many satellites actually get heard.</figcaption>
         </figure>
       </li>
 
-      <li class="phase is-wip">
-        <span class="phase-date">August 30, 2026</span>
-        <h3>Phase 9 — GPS &amp; routing layer <span class="tag tag--wip">🟡 In progress</span></h3>
-        <p>Receiver and antenna <strong>ordered</strong>: a u-blox NEO-F10N
-          (dual-band L1/L5 with multipath mitigation, ~1.5&nbsp;m accuracy) and a
-          multi-band active antenna — deliberately the more expensive half,
-          since the antenna decides how many satellites are actually heard. Its
-          job is decided and narrow: stamp training data with position and
-          speed, and later feed a <strong>deterministic routing layer</strong>
-          that snaps to an OpenStreetMap road graph and publishes a single
-          instruction string to the driving model. GPS ground speed also covers
-          the "only steer while rolling" interlock. Integration not started;
-          first step is a plain outdoor fix before enabling the L5 band.</p>
-      </li>
-
-      <li class="phase is-wip">
+      <li class="phase is-done">
         <span class="phase-date">August 2026 →</span>
-        <h3>Phase 10 — Autonomy (VLA training) <span class="tag tag--wip">🟡 In progress</span></h3>
-        <p>Underway. The data-collection design is locked —
-          language-conditioned episodes with a frozen instruction vocabulary,
-          labeled at record time from the controller, 100+ episodes per maneuver
-          across many intersections — and the model side is being sized before
+        <h3>Phase 10: Autonomy (VLA training) <span class="tag tag--done">✅ Complete</span></h3>
+        <p>The data-collection design is locked, with language-conditioned
+          episodes on a frozen instruction vocabulary, labeled at record time
+          from the controller, and 100+ episodes per maneuver spread across many
+          intersections. The model side was sized before
           any driving data exists: the pretrained SmolVLA checkpoint is set up
           on the Jetson with LeRobot, and an inference benchmark sweeps camera
           views, image resolution, and denoise steps to measure exactly what six
-          views cost in latency and memory. Next: brake telemetry and the
-          combined drive-and-log script, then collection starts once the cameras
-          are mounted. Then fine-tune, deploy, and layer in the safety
-          override.</p>
+          views cost in latency and memory. The loop is now closed: driving data
+          collected on the cart, the model fine-tuned and deployed on the
+          Jetson, and the safety override layered on top, with the cart driving
+          itself point to point and a human in the seat throughout.</p>
+        <figure class="media">
+          <video muted loop playsinline preload="metadata" data-autoplay
+                 aria-label="Sped-up run of the cart driving itself from one point to another">
+            <source src="assets/self-driving.mp4" type="video/mp4">
+          </video>
+          <figcaption>A full point-to-point run, sped up: the cart driving itself
+            down the street with a human in the seat.</figcaption>
+        </figure>
       </li>
 
       <li class="phase">
         <span class="phase-date">Later</span>
-        <h3>Phase 11 — LiDAR <span class="tag tag--plan">⬜ Planned</span></h3>
+        <h3>Phase 11: LiDAR <span class="tag tag--plan">⬜ Planned</span></h3>
         <p>Not started, deliberately deferred. An independent, depth-sensing
-          obstacle-detection layer alongside the cameras — a second opinion
-          that doesn't share the cameras' failure modes (glare, low light,
+          obstacle-detection layer alongside the cameras, a second opinion
+          that doesn't share their failure modes (glare, low light,
           a lens cap of dust). It would slot into the existing override layer
           above the driving policy, not into the model itself, so the
           autonomy stack ships and proves out on cameras first. Sensor
@@ -540,15 +814,11 @@
     <p class="sec-label">05 · Roadmap</p>
     <h2>What's next</h2>
     <ul class="next-list">
-      <li>Brake telemetry — the Arduino reports the actual brake-pedal position back to the Jetson, so logged brake labels are real</li>
-      <li>Move the Xbox controller to the Jetson over Bluetooth and write the combined drive-and-log script — control and logging in one loop</li>
-      <li>Mount the camera rail (housings are printed) and retune exposure outdoors</li>
-      <li>GPS bring-up: a plain outdoor fix first, then the one-time L5 enable</li>
-      <li>Reach <strong>hardware complete</strong>: the cart drives on the controller with all six cameras mounted and full state feedback</li>
-      <li>Begin data collection — labeled, language-conditioned episodes of synchronized camera + command data while driving manually</li>
-      <li>Fine-tune the VLA, deploy it on the Jetson, and bring up the safety-override layer — one layer at a time, safety first</li>
-      <li>Longer term: add LiDAR — an independent, depth-sensing obstacle-detection layer alongside the cameras</li>
-      <li>Keep a human in the seat throughout — Level-2, always overridable</li>
+      <li>Widen the driving dataset: more maneuvers, more intersections, more recovery episodes, and more weather and light</li>
+      <li>Push the routing layer further: longer multi-turn routes off the OpenStreetMap graph rather than single point-to-point runs</li>
+      <li>Harden the safety stack: more override cases, and measured stopping distance against approach speed</li>
+      <li>Longer term, add LiDAR: an independent, depth-sensing obstacle-detection layer that doesn't share the cameras' failure modes</li>
+      <li>Keep a human in the seat throughout: Level-2, always overridable</li>
     </ul>
   </div>
 </section>
@@ -800,6 +1070,34 @@ window.__onView = function (fn) {
 </script>
 
 <!-- ================================================================
+     SECTION NAV BEHAVIOUR
+     Highlights the tab for whichever section is currently under the nav bar.
+     ================================================================ -->
+<script>
+(function () {
+  var nav = document.querySelector('.snav');
+  if (!nav) return;
+  var tabs = Array.prototype.slice.call(nav.querySelectorAll('[data-sec]'));
+  var secs = tabs.map(function (t) { return document.getElementById(t.getAttribute('data-sec')); });
+
+  function mark() {
+    var line = nav.offsetHeight + 40;       // just under the bar
+    var active = -1;
+    for (var i = 0; i < secs.length; i++) {
+      if (secs[i] && secs[i].getBoundingClientRect().top <= line) active = i;
+    }
+    // past the last section (footer) keep the last tab lit
+    tabs.forEach(function (t, i) { t.classList.toggle('is-active', i === active); });
+    nav.classList.toggle('is-stuck', window.scrollY > 8);
+  }
+
+  window.addEventListener('scroll', mark, { passive: true });
+  window.addEventListener('resize', mark);
+  mark();
+})();
+</script>
+
+<!-- ================================================================
      LOOPING VIDEOS
      Every filmed subject on this page is a muted, looping video - there are no
      play buttons anywhere. They start when scrolled into view and pause when
@@ -826,7 +1124,7 @@ window.__onView = function (fn) {
      there, it shows. If it isn't there yet, this hides the broken element
      and reveals the labeled placeholder box instead. So adding media is a
      one-step job: name the file exactly as the placeholder says and drop it
-     into assets/ — no HTML edits, ever.
+     into assets/, no HTML edits, ever.
      ================================================================ -->
 <script>
 // If a media file ever fails to load, hide that figure outright rather than
