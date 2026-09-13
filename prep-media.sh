@@ -31,7 +31,7 @@ subsystem-showcase:mp4 self-driving:mp4 \
 pcb-unboxing:mp4 pcb-assembly:mp4 pcb-design:mp4 \
 dash-mounting:mp4 \
 throttle-pot:mp4 throttle-underfloor:mp4 throttle-schematic:mp4 throttle-start:mp4 \
-soldering-wires:mp4 boards-flatlay:jpg pcb-layout:jpg power-dash:mp4 gps-antenna:mp4 camera-rail-build:mp4 cad-steering-1:mp4 cad-steering-2:mp4"
+soldering-wires:mp4 boards-flatlay:jpg pcb-layout:jpg power-dash:mp4 gps-antenna:mp4 camera-rail-build:mp4 cad-steering-1:mp4 cad-steering-2:mp4 drawio-timelapse:mp4"
 
 MAXW=2000        # max image width in px
 VIDH="${VIDH:-1080}"   # max video height in px. Override: VIDH=720 ./prep-media.sh ...
