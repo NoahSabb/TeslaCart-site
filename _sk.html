@@ -643,13 +643,6 @@
           capture → neural net → render loop the driving model will use. Since
           then it runs headless: Tailscale + key-based SSH, no monitor or
           keyboard needed.</p>
-        <figure class="media">
-          <video muted loop playsinline preload="metadata" data-autoplay
-                 aria-label="Unboxing the NVIDIA Jetson Orin Nano developer kit">
-            <source src="assets/jetson-unboxing.mp4" type="video/mp4">
-          </video>
-          <figcaption>The Orin Nano developer kit out of the box, before any of it ran.</figcaption>
-        </figure>
       </li>
 
 
@@ -786,11 +779,11 @@
           mount on the cart are the two open items.</p>
         <figure class="media">
           <video muted loop playsinline preload="metadata" data-autoplay
-                 aria-label="The GPS receiver board and the antenna mounted on the cart roof">
-            <source src="assets/gps-showcase.mp4" type="video/mp4">
+                 aria-label="The GPS antenna mounted on the cart">
+            <source src="assets/gps-antenna.mp4" type="video/mp4">
           </video>
-          <figcaption>The receiver board, and the active antenna mounted up on the
-            roof beside the light bar with its cable routed down.</figcaption>
+          <figcaption>The active antenna on the cart: the half that
+            decides how many satellites actually get heard.</figcaption>
         </figure>
       </li>
 
@@ -1257,5 +1250,33 @@ window.__onView = function (fn) {
 })();
 </script>
 
+<script>window.addEventListener('load',function(){
+var wrap=document.querySelector('.hero-player'); var v=wrap.querySelector('video');
+var seek=wrap.querySelector('.vctl-seek'); var out=[];
+setTimeout(function(){
+  out.push('seekable='+(v.seekable.length?v.seekable.end(0).toFixed(0):'none'));
+  v.currentTime=5;
+  setTimeout(function(){
+    out.push('set5='+v.currentTime.toFixed(1));
+    wrap.querySelector('[data-act=fwd]').click();
+    setTimeout(function(){
+      out.push('fwd='+v.currentTime.toFixed(1)+'(want 15)');
+      v.currentTime=3;
+      setTimeout(function(){
+        wrap.querySelector('[data-act=back]').click();
+        setTimeout(function(){
+          out.push('backWrap='+v.currentTime.toFixed(1)+'(want ~121)');
+          seek.value=500; seek.dispatchEvent(new Event('input'));
+          setTimeout(function(){
+            out.push('scrub50='+v.currentTime.toFixed(1)+'(want 64)');
+            out.push('timeLabel='+wrap.querySelector('.vctl-time').textContent);
+            document.title=out.join(' | ');
+          },800);
+        },800);
+      },800);
+    },800);
+  },900);
+},5000);
+});</script>
 </body>
 </html>
