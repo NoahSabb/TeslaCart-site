@@ -663,3 +663,29 @@ section[id], header[id] { scroll-margin-top: 68px; }
 @media (hover: none) {
   .vctl { opacity: 1; transform: none; pointer-events: auto; }
 }
+
+/* ---------- budget constraint callout ---------- */
+
+.constraint {
+  margin: 30px 0 34px;
+  padding: 20px 22px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  background:
+    linear-gradient(90deg, rgba(242,163,60,0.06), rgba(242,163,60,0) 55%),
+    var(--surface);
+}
+.constraint-figure {
+  font-family: var(--mono);
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  margin: 0 0 10px;
+}
+.constraint p { font-size: 15px; color: var(--muted); margin: 0 0 10px; max-width: 640px; }
+.constraint p:last-child { margin-bottom: 0; }
+
+@media (max-width: 640px) {
+  .constraint { padding: 16px 16px; }
+}
