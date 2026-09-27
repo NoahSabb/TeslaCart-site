@@ -530,10 +530,10 @@
   <div class="wrap">
     <p class="sec-label">04 · Build log</p>
     <h2>Phase by phase</h2>
-    <p>Honest status, phase by phase: what's proven and what hasn't started.
+    <p>Honest status, phase by phase: what's proven and what's still in flight.
       Every subsystem below is built and running on the cart; the one open phase
       is marked as such. <span class="tag tag--done">✅ Complete</span>
-      <span class="tag tag--plan">⬜ Planned</span></p>
+      <span class="tag tag--wip">🟡 In progress</span></p>
 
     <ol class="timeline">
       <li class="phase is-done">
@@ -824,17 +824,16 @@
         </figure>
       </li>
 
-      <li class="phase">
-        <span class="phase-date">Later</span>
-        <h3>Phase 11: LiDAR <span class="tag tag--plan">⬜ Planned</span></h3>
-        <p>Not started, deliberately deferred. An independent, depth-sensing
-          obstacle-detection layer alongside the cameras, a second opinion
-          that doesn't share their failure modes (glare, low light,
-          a lens cap of dust). It would slot into the existing override layer
-          above the driving policy, not into the model itself, so the
-          autonomy stack ships and proves out on cameras first. Sensor
-          selection, mounting, and the cost trade against a plain radar
-          are all open.</p>
+      <li class="phase is-wip">
+        <span class="phase-date">September 2026 →</span>
+        <h3>Phase 11: LiDAR <span class="tag tag--wip">🟡 In progress</span></h3>
+        <p>Underway. An independent, depth-sensing obstacle-detection layer
+          alongside the cameras, a second opinion that doesn't share their
+          failure modes (glare, low light, a lens cap of dust). It slots into
+          the existing override layer above the driving policy, not into the
+          model itself, so the autonomy that already runs on cameras keeps
+          working unchanged. Sensor selection, mounting, and the cost trade
+          against a plain radar are being worked through now.</p>
       </li>
     </ol>
     <hr class="sec-rule">
@@ -852,7 +851,7 @@
       <li>Widen the driving dataset: more maneuvers, more intersections, more recovery episodes, and more weather and light</li>
       <li>Push the routing layer further: longer multi-turn routes off the OpenStreetMap graph rather than single point-to-point runs</li>
       <li>Harden the safety stack: more override cases, and measured stopping distance against approach speed</li>
-      <li>Longer term, add LiDAR: an independent, depth-sensing obstacle-detection layer that doesn't share the cameras' failure modes</li>
+      <li>Finish the LiDAR layer: an independent, depth-sensing obstacle detector that doesn't share the cameras' failure modes</li>
       <li>Keep every run overridable: kill switch on the controller, cutoff switch on the cart, speeds low enough to stay ahead of on foot</li>
     </ul>
   </div>
